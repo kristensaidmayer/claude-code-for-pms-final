@@ -163,3 +163,11 @@ responders.
 - Priya was the only PM for 14 months and "made calls faster than I checked
   them". She suggested looking closely at the parts of the product nobody has
   examined.
+
+**Module 2 (6 Oct): interviews and tickets**
+- Sources: the wiki's Customer interviews database (4 handlers, 2–5 Sep: Aunt Dot/Vesper, Mr. Ambrose/Captain Vantage, Halloran/Sgt. Bulwark, Kip/Meteor Mite + The Gale) and `support_tickets` (147 rows). The routing code is in `00-rook/code/dispatch-routing/`.
+- Mechanism from the code: +0.08 for a take and −0.12 for a miss or turn-down, no decay, and the score only moves when pinged. So the break-even take rate is 60%. After 4.2, every collapsed responder was below 60% (18–29%) and every one that held was above it (64–71%). Vesper and Meteor Mite took 0 of 20 first-in-line pings at 60s, against 79% and 62% at 90s.
+- Correction: the quiet-phone tickets cover 4 responders, but only 2 of them collapsed. The other 2 were in quiet areas. Vesper and Meteor Mite collapsed and have zero tickets: the four interviewed handlers file 0–1 tickets each. None of the 45 routing tickets since 12 Aug has been answered, including Ambrose's #3043 (13 Aug).
+- Signals: a 7-day missed-ping rate above 5% would have alerted on 12 Aug, 5–6 days before the weekly acceptance report or the support escalation. Take rate and unfilled callouts look recovered by early September while 4 responders stay trapped.
+- Drafts this session (in chat only): a monitoring/response plan with 5 dashboard metrics, and a 3-study research plan (why misses happen; cross-area cover, where 0 of 58 out-of-area pings were taken before 4.2; the handler's part in pings) feeding 3 decisions with Helen at the end of week 3.
+- Still open: Ravi (tap times, September data), Wen (is `_scores` in memory and reset on deploy; ranked lists for callouts 41017/41039/41042), Marcus (push receipts), Sofia (what triggers the console chime).
