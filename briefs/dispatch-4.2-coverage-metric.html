@@ -1,0 +1,128 @@
+<title>Dispatch 4.2 Coverage Metric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: single memo column. Four sentences, then one chart that proves them. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5b6577;
+  --line: #dde1e8;
+  --cover: #c2410c;
+  --stuck: #2b5fd9;
+  --overall: #1b2230;
+  --good: #15803d;
+  --tint: #eef2fb;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+    --cover: #fb923c; --stuck: #7ea4ff; --overall: #e6e9ef; --good: #4ade80; --tint: #1e2840; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+  --cover: #fb923c; --stuck: #7ea4ff; --overall: #e6e9ef; --good: #4ade80; --tint: #1e2840; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 56px; display: flex; flex-direction: column; gap: 32px; }
+header { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow { font-family: var(--font-data); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1, h2 { font-family: var(--font-display); margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.25rem; }
+p { margin: 0; max-width: 65ch; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px; font-size: 1.05rem; }
+.plan strong { font-weight: 600; }
+section { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.muted { color: var(--muted); font-size: 14px; }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; }
+.chart svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.chart text { font-family: var(--font-data); font-size: 12px; fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 560px) { h1 { font-size: 1.6rem; } .plan { padding: 18px; font-size: 1rem; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Rook Dispatch · Release 4.2 · Data through week of 31 Aug 2026</div>
+    <h1>How we’ll judge Dispatch 4.2</h1>
+  </header>
+
+  <div class="plan">
+    <p>We will judge 4.2 by one number: <strong>the share of callouts nobody took</strong>, which doubled from 5.5% before the release to 11.1% after, or from about 1 in 18 to 1 in 9.</p>
+    <p>We read it as a <strong>4-week average with a target of 6.5% or lower</strong>, because single weeks swing a lot and the 5.5% on 31 Aug made it look fixed when it wasn’t.</p>
+    <p>Next to it we track <strong>how many responders are locked out</strong> (4 today, target 0), because neighbours covering for them can make coverage look fine while the problem spreads.</p>
+    <p>Split by area, the stuck responders’ own areas are covered, but <strong>the neighbours doing the covering now miss pings at home and their areas are still at 12% unanswered</strong>, so the fix (back to a 90-second wait plus a one-time score repair) needs to go in the next release.</p>
+  </div>
+
+  <section aria-labelledby="chart-h">
+    <h2 id="chart-h">Callouts nobody took, by week</h2>
+    <div class="chart">
+      <svg viewBox="0 0 820 310" role="img" aria-label="Line chart of the weekly share of callouts nobody took, 29 June to 31 August 2026. Before the 12 August release all three lines sit between 2 and 8 percent. After it, the covering responders' areas jump to 16 to 17 percent and are still at 12.5 percent on 31 August. The stuck responders' own areas spike to 14.7 percent in release week and fall back to 1.9 percent. Overall the rate peaks at 14 percent and shows 5.5 percent on 31 August.">
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="60" y1="30" x2="680" y2="30"/>
+          <line x1="60" y1="90" x2="680" y2="90"/>
+          <line x1="60" y1="150" x2="680" y2="150"/>
+          <line x1="60" y1="210" x2="680" y2="210"/>
+          <line x1="60" y1="270" x2="680" y2="270"/>
+        </g>
+        <text x="50" y="34" text-anchor="end">20%</text>
+        <text x="50" y="94" text-anchor="end">15%</text>
+        <text x="50" y="154" text-anchor="end">10%</text>
+        <text x="50" y="214" text-anchor="end">5%</text>
+        <text x="50" y="274" text-anchor="end">0%</text>
+
+        <line x1="60" y1="192" x2="680" y2="192" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="64" y="186" style="fill: var(--good)">Target 6.5%</text>
+
+        <line x1="493" y1="22" x2="493" y2="270" stroke="var(--fg)" stroke-width="1" stroke-dasharray="2 3" opacity=".55"/>
+        <text x="498" y="22" style="fill: var(--fg)">4.2 ships, 12 Aug</text>
+
+        <polyline fill="none" stroke="var(--stuck)" stroke-width="2" stroke-linejoin="round"
+          points="60,196.8 128.9,196.8 197.8,244.8 266.7,177.6 335.6,224.4 404.4,220.8 473.3,93.6 542.2,172.8 611.1,170.4 680,247.2"/>
+        <polyline fill="none" stroke="var(--overall)" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 3"
+          points="60,193.2 128.9,200.4 197.8,226.8 266.7,170.4 335.6,226.8 404.4,235.2 473.3,117.6 542.2,102 611.1,115.2 680,204"/>
+        <polyline fill="none" stroke="var(--cover)" stroke-width="3.5" stroke-linejoin="round"
+          points="60,205.2 128.9,225.6 197.8,202.8 266.7,184.8 335.6,246 404.4,226.8 473.3,74.4 542.2,66 611.1,74.4 680,120"/>
+
+        <circle cx="680" cy="120" r="5" fill="var(--cover)"/>
+        <circle cx="680" cy="204" r="4" fill="var(--overall)"/>
+        <circle cx="680" cy="247.2" r="4" fill="var(--stuck)"/>
+        <text x="690" y="116" style="fill: var(--cover); font-weight: 500">Covering areas</text>
+        <text x="690" y="131" style="fill: var(--cover); font-weight: 500">12.5%</text>
+        <text x="690" y="208" style="fill: var(--overall); font-weight: 500">Overall 5.5%</text>
+        <text x="690" y="251" style="fill: var(--stuck); font-weight: 500">Stuck areas 1.9%</text>
+
+        <g text-anchor="middle">
+          <text x="60" y="292">29 Jun</text>
+          <text x="128.9" y="292">6 Jul</text>
+          <text x="197.8" y="292">13 Jul</text>
+          <text x="266.7" y="292">20 Jul</text>
+          <text x="335.6" y="292">27 Jul</text>
+          <text x="404.4" y="292">3 Aug</text>
+          <text x="473.3" y="292">10 Aug</text>
+          <text x="542.2" y="292">17 Aug</text>
+          <text x="611.1" y="292">24 Aug</text>
+          <text x="680" y="292">31 Aug</text>
+        </g>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i style="background: var(--cover)"></i>Areas of the 6 responders covering for the stuck four</span>
+      <span><i style="background: var(--overall)"></i>All callouts</span>
+      <span><i style="background: var(--stuck)"></i>The 4 stuck responders’ own areas</span>
+    </div>
+    <p class="muted">The overall line dipped to 5.5% on 31 Aug, but the covering areas never came back. Each area group has 27 to 56 callouts a week, so single weeks are noisy. That’s why the target applies to the 4-week average, which is 11.2% overall as of 31 Aug.</p>
+  </section>
+
+  <footer>Source: rook-database callouts and pings, 29 Jun to 6 Sep 2026. Covering areas: Midtown, Hillcrest, Kingsbridge, Southport, Mill District, Riverside. Stuck areas: Old Town, Uptown, Harborside, Eastgate.</footer>
+</div>

@@ -1,0 +1,200 @@
+<title>Dispatch 4.2 Health Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: one-screen briefing. Verdict, three numbers, one chart, then the ask. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5b6577;
+  --line: #dde1e8;
+  --miss: #c2410c;
+  --decline: #a9b2c3;
+  --bad: #b91c1c;
+  --good: #15803d;
+  --accent: #2b5fd9;
+  --tint: #eef2fb;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+    --miss: #fb923c; --decline: #4b5568; --bad: #f87171; --good: #4ade80; --accent: #7ea4ff; --tint: #1e2840; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+  --miss: #fb923c; --decline: #4b5568; --bad: #f87171; --good: #4ade80; --accent: #7ea4ff; --tint: #1e2840; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 820px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 56px; display: flex; flex-direction: column; gap: 32px; }
+header { display: flex; flex-direction: column; gap: 10px; }
+.eyebrow { font-family: var(--font-data); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1, h2 { font-family: var(--font-display); margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 2.1rem; }
+h2 { font-size: 1.25rem; }
+p { margin: 0; max-width: 66ch; }
+.lede { font-size: 1.1rem; }
+section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.muted { color: var(--muted); font-size: 14px; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tile b { font-family: var(--font-data); font-weight: 500; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tile .lbl { font-weight: 600; font-size: 14px; }
+.tile .sub { font-size: 13px; color: var(--muted); }
+.tile.bad b { color: var(--bad); }
+.tile.miss b { color: var(--miss); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; }
+.chart svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.chart text { font-family: var(--font-data); font-size: 12px; fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--muted); }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+ol.flow { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; max-width: 66ch; }
+.ask { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+.ask h2 { color: var(--accent); }
+.ask ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 8px; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.r { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 600px) { .tiles { grid-template-columns: 1fr; } h1 { font-size: 1.7rem; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Rook Dispatch · Release 4.2 · Data through 6 Sep 2026</div>
+    <h1>Dispatch 4.2 is not healthy</h1>
+    <p class="lede">Over the last four weeks, 1 in 9 callouts went unanswered. Before 4.2 it was 1 in 20. Almost all of the increase comes from responders missing pings under the new 60-second wait.</p>
+  </header>
+
+  <div class="tiles">
+    <div class="tile bad">
+      <span class="lbl">Callouts nobody took</span>
+      <b>11.2%</b>
+      <span class="sub">4-week average. Was 5.1%. Target 6.5% or lower.</span>
+    </div>
+    <div class="tile bad">
+      <span class="lbl">Responders locked out</span>
+      <b>4</b>
+      <span class="sub">Getting almost no pings. Target 0.</span>
+    </div>
+    <div class="tile miss">
+      <span class="lbl">Share of the rise from missed pings</span>
+      <b>85%</b>
+      <span class="sub">Callouts left unanswered after turn-downs barely changed.</span>
+    </div>
+  </div>
+
+  <section aria-labelledby="chart-h">
+    <h2 id="chart-h">Callouts nobody took, 4-week average</h2>
+    <div class="chart">
+      <svg viewBox="0 0 720 300" role="img" aria-label="Stacked bars of the 4-week share of callouts nobody took, for windows ending 20 July to 31 August 2026. Before 4.2 the total is 4.7 to 6.0 percent, almost all after turn-downs. After 4.2 it rises to 6.6, 7.9, 10.3 and 11.2 percent. The part after a missed ping grows from 0.2 percent to 5.4 percent, while the part after turn-downs stays near 5 to 6 percent.">
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="70" y1="260" x2="690" y2="260"/>
+          <line x1="70" y1="200" x2="690" y2="200"/>
+          <line x1="70" y1="140" x2="690" y2="140"/>
+          <line x1="70" y1="80" x2="690" y2="80"/>
+          <line x1="70" y1="20" x2="690" y2="20"/>
+        </g>
+        <text x="60" y="264" text-anchor="end">0%</text>
+        <text x="60" y="204" text-anchor="end">3%</text>
+        <text x="60" y="144" text-anchor="end">6%</text>
+        <text x="60" y="84" text-anchor="end">9%</text>
+        <text x="60" y="24" text-anchor="end">12%</text>
+
+        <!-- turn-downs (bottom) -->
+        <rect x="89.3" y="142.6" width="50" height="117.4" fill="var(--decline)"/>
+        <rect x="177.9" y="156" width="50" height="104" fill="var(--decline)"/>
+        <rect x="266.4" y="170.2" width="50" height="89.8" fill="var(--decline)"/>
+        <rect x="355" y="158" width="50" height="102" fill="var(--decline)"/>
+        <rect x="443.6" y="161.2" width="50" height="98.8" fill="var(--decline)"/>
+        <rect x="532.1" y="138.2" width="50" height="121.8" fill="var(--decline)"/>
+        <rect x="620.7" y="143.8" width="50" height="116.2" fill="var(--decline)"/>
+        <!-- missed (top) -->
+        <rect x="89.3" y="139" width="50" height="3.6" fill="var(--miss)"/>
+        <rect x="177.9" y="152.4" width="50" height="3.6" fill="var(--miss)"/>
+        <rect x="266.4" y="166.6" width="50" height="3.6" fill="var(--miss)"/>
+        <rect x="355" y="127.8" width="50" height="30.2" fill="var(--miss)"/>
+        <rect x="443.6" y="102" width="50" height="59.2" fill="var(--miss)"/>
+        <rect x="532.1" y="53" width="50" height="85.2" fill="var(--miss)"/>
+        <rect x="620.7" y="36" width="50" height="107.8" fill="var(--miss)"/>
+
+        <line x1="70" y1="130" x2="690" y2="130" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="74" y="124" style="fill: var(--good)">Target 6.5%</text>
+
+        <line x1="335.7" y1="12" x2="335.7" y2="260" stroke="var(--fg)" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>
+        <text x="341" y="20" style="fill: var(--fg)">4.2 ships 12 Aug</text>
+
+        <g text-anchor="middle" style="font-weight:500">
+          <text x="114.3" y="133" style="fill: var(--fg)">6.0%</text>
+          <text x="202.9" y="146" style="fill: var(--fg)">5.4%</text>
+          <text x="291.4" y="160" style="fill: var(--fg)">4.7%</text>
+          <text x="380" y="121" style="fill: var(--fg)">6.6%</text>
+          <text x="468.6" y="96" style="fill: var(--fg)">7.9%</text>
+          <text x="557.1" y="47" style="fill: var(--fg)">10.3%</text>
+          <text x="645.7" y="30" style="fill: var(--bad)">11.2%</text>
+        </g>
+        <g text-anchor="middle">
+          <text x="114.3" y="280">20 Jul</text>
+          <text x="202.9" y="280">27 Jul</text>
+          <text x="291.4" y="280">3 Aug</text>
+          <text x="380" y="280">10 Aug</text>
+          <text x="468.6" y="280">17 Aug</text>
+          <text x="557.1" y="280">24 Aug</text>
+          <text x="645.7" y="280">31 Aug</text>
+        </g>
+        <text x="380" y="296" text-anchor="middle" style="font-size:11px">4 weeks ending</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background: var(--miss)"></i>Unanswered after a missed ping</span>
+      <span><i class="sw" style="background: var(--decline)"></i>Unanswered after turn-downs only</span>
+    </div>
+    <p class="muted">The grey part is the normal level: some callouts always go unanswered because the responder said no. The orange part is new. Before 4.2 it was about 1 callout a month. In the last four weeks it was 26.</p>
+  </section>
+
+  <section aria-labelledby="what-h">
+    <h2 id="what-h">What happened</h2>
+    <ol class="flow">
+      <li>4.2 cut the time a responder has to answer a ping from 90 seconds to 60.</li>
+      <li>Responders who answer slowly started timing out. Dispatch scores a timeout the same as a no, and the score never recovers by itself.</li>
+      <li>Four responders (Vesper, Farlight, The Undertow, Meteor Mite) sank far enough that Dispatch almost stopped pinging them. Neighbours now cover their areas and miss more pings at home.</li>
+      <li>The weekly take-rate report looks recovered only because those four barely get pinged. Two of their handlers never filed a ticket.</li>
+    </ol>
+  </section>
+
+  <section class="ask" aria-labelledby="ask-h">
+    <h2 id="ask-h">Decisions needed</h2>
+    <ol>
+      <li><strong>Approve a slot in the next release</strong> to restore the 90-second wait and repair the four responders’ scores. Keep the proximity weights.</li>
+      <li><strong>Adopt unanswered callouts (4-week) as the health metric for 4.2</strong>, reported with the locked-out count, instead of the take rate.</li>
+      <li><strong>Turn on a daily early-warning alert</strong> for any responder whose score falls 0.3 or more in a week. In a replay it flagged all four 3 to 7 days before they locked out.</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="fix-h">
+    <h2 id="fix-h">How we’ll know it worked</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Measure</th><th class="r">Now</th><th class="r">Target, 2 weeks after the fix</th></tr></thead>
+        <tbody>
+          <tr><td>Callouts nobody took, 4-week</td><td class="r">11.2%</td><td class="r">≤ 6.5%</td></tr>
+          <tr><td>…of which after a missed ping</td><td class="r">5.4%</td><td class="r">≤ 1%</td></tr>
+          <tr><td>Responders locked out</td><td class="r">4</td><td class="r">0</td></tr>
+          <tr><td>Median time to take a ping</td><td class="r">needs data</td><td class="r">no more than +15s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Still open: Ravi’s answer-time data (would confirm the 60-second cause), Wen’s replay of callouts 41006, 41017, 41039 and 41042 (why Vesper lost first place in Old Town so fast), Marcus’s push delivery logs. Separately, 45 routing tickets since 12 Aug are unanswered.</p>
+  </section>
+
+  <footer>Source: rook-database callouts, pings and support tickets, 29 Jun to 7 Sep 2026. Prepared by the Rook Dispatch PM, October 2026.</footer>
+</div>

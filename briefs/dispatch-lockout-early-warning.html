@@ -1,0 +1,238 @@
+<title>Lockout Early Warning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: memo column. Verdict first, then the timeline chart, then the threshold table and how it fits the report. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5b6577;
+  --line: #dde1e8;
+  --alert: #c2410c;
+  --proposed: #8a94a6;
+  --lock: #b91c1c;
+  --good: #15803d;
+  --tint: #eef2fb;
+  --bad-bg: #fdecec;
+  --good-bg: #e8f5ec;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+    --alert: #fb923c; --proposed: #6b7486; --lock: #f87171; --good: #4ade80; --tint: #1e2840;
+    --bad-bg: #3a1d1f; --good-bg: #16301f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+  --alert: #fb923c; --proposed: #6b7486; --lock: #f87171; --good: #4ade80; --tint: #1e2840;
+  --bad-bg: #3a1d1f; --good-bg: #16301f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1000px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 60px; display: flex; flex-direction: column; gap: 36px; }
+header { display: flex; flex-direction: column; gap: 8px; max-width: 760px; }
+.eyebrow { font-family: var(--font-data); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1, h2 { font-family: var(--font-display); margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.3rem; }
+p { margin: 0; max-width: 68ch; }
+section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.muted { color: var(--muted); font-size: 14px; }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.verdict { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
+.rule { font-family: var(--font-data); background: var(--tint); border-radius: 6px; padding: 10px 12px; font-size: 14px; }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; }
+.chart svg { display: block; width: 100%; min-width: 760px; height: auto; }
+.chart text { font-family: var(--font-data); font-size: 12px; fill: var(--muted); }
+.chart .name { font-family: var(--font-body); font-size: 13px; fill: var(--fg); font-weight: 500; }
+.chart .lead { font-size: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--muted); }
+.sw { display: inline-block; width: 18px; height: 9px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.r { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.pick td { background: var(--good-bg); }
+tr.orig td { background: var(--tint); }
+.pill { display: inline-block; font-family: var(--font-data); font-size: 12px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.bad { background: var(--bad-bg); color: var(--lock); }
+.pill.good { background: var(--good-bg); color: var(--good); }
+ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; max-width: 68ch; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 560px) { h1 { font-size: 1.6rem; } .verdict { padding: 18px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Rook Dispatch · Backtest across 16 responders · 5 Jul to 6 Sep 2026</div>
+    <h1>Lockout early warning</h1>
+    <p class="muted">Every rule below was replayed day by day against every responder, including the five weeks before 4.2.</p>
+  </header>
+
+  <div class="verdict">
+    <p><strong>The proposed rule (3 or fewer takes in the last 10 pings, plus 7-day pings below 60% of normal) catches all four lockouts with no false alarms, but it fires on the day of the lockout or a day later.</strong> The volume condition only trips once the collapse is already happening, so the rule repeats the locked-out count instead of warning ahead of it.</p>
+    <p><strong>Use a 7-day score drop instead.</strong> It caught all four, 3 to 7 days before each lockout. It had one false alarm before 4.2 and three after, from two responders who really were struggling.</p>
+    <div class="rule">Alert when a responder’s score falls by 0.3 or more over 7 days.<br>That is: 3 × (missed + turned down) − 2 × taken ≥ 8 in the last 7 days.</div>
+  </div>
+
+  <section aria-labelledby="chart-h">
+    <h2 id="chart-h">When each rule would have fired</h2>
+    <div class="chart">
+      <svg viewBox="0 0 960 390" role="img" aria-label="Timeline from 6 July to 6 September 2026. For Farlight, The Undertow, Meteor Mite and Vesper, the recommended 7-day score alert starts 6, 7, 6 and 3 days before each lockout. The proposed rule starts on the lockout day or one day after. Nightwell and Ironvale trigger short recommended alerts but never lock out. The other ten responders trigger no alerts.">
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="140" y1="44" x2="140" y2="372"/>
+          <line x1="212.3" y1="44" x2="212.3" y2="372"/>
+          <line x1="284.5" y1="44" x2="284.5" y2="372"/>
+          <line x1="356.8" y1="44" x2="356.8" y2="372"/>
+          <line x1="429" y1="44" x2="429" y2="372"/>
+          <line x1="501.3" y1="44" x2="501.3" y2="372"/>
+          <line x1="573.5" y1="44" x2="573.5" y2="372"/>
+          <line x1="645.8" y1="44" x2="645.8" y2="372"/>
+          <line x1="718.1" y1="44" x2="718.1" y2="372"/>
+          <line x1="790.3" y1="44" x2="790.3" y2="372"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="140" y="34">6 Jul</text>
+          <text x="212.3" y="34">13 Jul</text>
+          <text x="284.5" y="34">20 Jul</text>
+          <text x="356.8" y="34">27 Jul</text>
+          <text x="429" y="34">3 Aug</text>
+          <text x="501.3" y="34">10 Aug</text>
+          <text x="573.5" y="34">17 Aug</text>
+          <text x="645.8" y="34">24 Aug</text>
+          <text x="718.1" y="34">31 Aug</text>
+        </g>
+        <line x1="522" y1="20" x2="522" y2="372" stroke="var(--fg)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".6"/>
+        <text x="526" y="16" style="fill: var(--fg)">4.2 ships 12 Aug</text>
+
+        <text x="805" y="34" style="font-weight:500">Warning before lockout</text>
+
+        <!-- Farlight y=70 -->
+        <text x="12" y="74" class="name">Farlight</text>
+        <rect x="532.3" y="58" width="72.2" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="635.5" y="58" width="30.9" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="687.1" y="58" width="10.3" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="594.2" y="72" width="196.1" height="10" rx="2" fill="var(--proposed)"/>
+        <line x1="599.4" y1="52" x2="599.4" y2="88" stroke="var(--lock)" stroke-width="2.5"/>
+        <text x="805" y="67" class="lead" style="fill: var(--alert)">6 days early</text>
+        <text x="805" y="81" class="lead">same day</text>
+
+        <!-- The Undertow y=115 -->
+        <text x="12" y="119" class="name">The Undertow</text>
+        <rect x="542.6" y="103" width="92.9" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="604.5" y="117" width="185.8" height="10" rx="2" fill="var(--proposed)"/>
+        <line x1="620" y1="97" x2="620" y2="133" stroke="var(--lock)" stroke-width="2.5"/>
+        <text x="805" y="112" class="lead" style="fill: var(--alert)">7 days early</text>
+        <text x="805" y="126" class="lead">1 day early</text>
+
+        <!-- Meteor Mite y=160 -->
+        <text x="12" y="164" class="name">Meteor Mite</text>
+        <rect x="563.2" y="148" width="41.3" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="625.2" y="148" width="10.3" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="614.8" y="162" width="175.5" height="10" rx="2" fill="var(--proposed)"/>
+        <line x1="630.4" y1="142" x2="630.4" y2="178" stroke="var(--lock)" stroke-width="2.5"/>
+        <text x="805" y="157" class="lead" style="fill: var(--alert)">6 days early</text>
+        <text x="805" y="171" class="lead">1 day early</text>
+
+        <!-- Vesper y=205 -->
+        <text x="12" y="209" class="name">Vesper</text>
+        <rect x="594.2" y="193" width="10.3" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="635.5" y="193" width="72.2" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="635.5" y="207" width="154.8" height="10" rx="2" fill="var(--proposed)"/>
+        <line x1="630.4" y1="187" x2="630.4" y2="223" stroke="var(--lock)" stroke-width="2.5"/>
+        <text x="805" y="202" class="lead" style="fill: var(--alert)">3 days early</text>
+        <text x="805" y="216" class="lead" style="fill: var(--lock)">1 day late</text>
+
+        <line x1="12" y1="236" x2="950" y2="236" stroke="var(--line)" stroke-width="1"/>
+        <text x="12" y="252" style="font-size:11px; letter-spacing:.06em">DID NOT LOCK OUT</text>
+
+        <!-- Nightwell y=275 -->
+        <text x="12" y="279" class="name">Nightwell</text>
+        <rect x="573.5" y="263" width="41.3" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="738.7" y="263" width="10.3" height="10" rx="2" fill="var(--alert)"/>
+        <text x="805" y="272" class="lead">false alarm ×2</text>
+        <text x="805" y="286" class="lead">proposed: none</text>
+
+        <!-- Ironvale y=318 -->
+        <text x="12" y="322" class="name">Ironvale</text>
+        <rect x="191.6" y="306" width="10.3" height="10" rx="2" fill="var(--alert)"/>
+        <rect x="604.5" y="306" width="10.3" height="10" rx="2" fill="var(--alert)"/>
+        <text x="805" y="315" class="lead">false alarm ×2</text>
+        <text x="805" y="329" class="lead">(1 before 4.2)</text>
+
+        <!-- Others y=358 -->
+        <text x="12" y="362" class="name">Other 10</text>
+        <text x="150" y="362">no alerts from either rule</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background: var(--alert)"></i>Recommended: 7-day score drop of 0.3 or more</span>
+      <span><i class="sw" style="background: var(--proposed)"></i>Proposed: 3 or fewer of last 10 taken + 7-day pings below 60%</span>
+      <span><i class="sw" style="background: var(--lock); width: 3px; height: 14px"></i>Lockout: 7-day pings below 50% of normal for 7 days running</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="grid-h">
+    <h2 id="grid-h">Nearby thresholds</h2>
+    <div class="tbl">
+      <table>
+        <thead>
+          <tr><th>Rule</th><th class="r">Caught</th><th class="r">False alarms (episodes / responders)</th><th class="r">Warning before lockout</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>≤ 2 of last 10 taken</td><td class="r"><span class="pill bad">3 of 4</span></td><td class="r">0 / 0</td><td class="r">all 3–6 days late</td></tr>
+          <tr><td>≤ 3 of last 10 taken</td><td class="r">4 of 4</td><td class="r">1 / 1</td><td class="r">−1 to 5 days</td></tr>
+          <tr class="orig"><td>≤ 3 of last 10 + 7-day pings &lt; 60% (proposed)</td><td class="r">4 of 4</td><td class="r">0 / 0</td><td class="r">−1 to 1 day</td></tr>
+          <tr><td>≤ 3 of last 10 + 7-day pings &lt; 80%</td><td class="r">4 of 4</td><td class="r">0 / 0</td><td class="r">−1 to 2 days</td></tr>
+          <tr><td>≤ 4 of last 10 taken</td><td class="r">4 of 4</td><td class="r">3 / 3</td><td class="r">−1 to 7 days</td></tr>
+          <tr><td>≤ 4 of last 10 + 7-day pings &lt; 80%</td><td class="r">4 of 4</td><td class="r">0 / 0</td><td class="r">−1 to 5 days</td></tr>
+          <tr><td>≤ 5 of last 10 taken (below break-even)</td><td class="r">4 of 4</td><td class="r"><span class="pill bad">21 / 11</span></td><td class="r">6–8 days</td></tr>
+          <tr><td>7-day pings &lt; 60% alone</td><td class="r">4 of 4</td><td class="r"><span class="pill bad">12 / 7</span></td><td class="r">1–9 days</td></tr>
+          <tr><td>7-day score drop ≥ 0.2</td><td class="r">4 of 4</td><td class="r">9 / 6</td><td class="r">6–8 days</td></tr>
+          <tr class="pick"><td><strong>7-day score drop ≥ 0.3 (recommended)</strong></td><td class="r">4 of 4</td><td class="r">4 / 2</td><td class="r"><span class="pill good">3–7 days</span></td></tr>
+          <tr><td>7-day score drop ≥ 0.4</td><td class="r">4 of 4</td><td class="r">2 / 1</td><td class="r">−1 to 6 days</td></tr>
+          <tr><td>7-day score drop ≥ 0.5</td><td class="r">4 of 4</td><td class="r">0 / 0</td><td class="r">−2 to 6 days</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Negative warning means the rule fired after the lockout. Vesper is the hard case for every take-rate rule. She kept taking Old Town callouts from third in line until 17 Aug, so her last-10 take rate stayed at 5 of 10 until after her pings had already dried up. The score rule catches her because it counts how many pings went wrong in the week, not just the share.</p>
+  </section>
+
+  <section aria-labelledby="fit-h">
+    <h2 id="fit-h">How it fits the weekly report</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Measure</th><th>What it tells Helen</th><th>Now</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unanswered callouts, 4-week</strong></td><td>The outcome. Did incidents get covered?</td><td class="num">11.2%</td></tr>
+          <tr><td>Locked-out responders</td><td>Who is already stuck. Pings below 50% of normal for a week.</td><td class="num">4</td></tr>
+          <tr><td>Early-warning alerts</td><td>Who is heading that way. Runs daily and goes to support, so someone checks in and reviews the score.</td><td class="num">Feeds the locked-out list</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li>The alert is an action trigger, not a headline number. Report only the count of open alerts under the locked-out line.</li>
+      <li>A responder moves from the alert list to the locked-out count once their pings collapse. Their score repair should start at the alert.</li>
+      <li>Ironvale and Nightwell, the two false alarms, were real near-misses: Riverside is the worst area for unanswered callouts, and Nightwell lost first place in Midtown for a week. A check-in for them would not have been wasted.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="lim-h">
+    <h2 id="lim-h">Limits</h2>
+    <ul>
+      <li>Only four lockouts to test against. Every threshold here is tuned on four cases, so treat 0.3 as a starting point and recheck it after the fix ships.</li>
+      <li>The score is rebuilt from the routing code’s rule (+0.08 per take, −0.12 per miss or turn-down). Wen’s stored scores would let the alert use the real number.</li>
+      <li>Normal ping volume is each responder’s average from 29 Jun to 11 Aug. Live, it should be a rolling 6-week average.</li>
+    </ul>
+  </section>
+
+  <footer>Source: rook-database pings, 29 Jun to 6 Sep 2026. Evaluated once per day from 5 Jul, after a week of history.</footer>
+</div>
