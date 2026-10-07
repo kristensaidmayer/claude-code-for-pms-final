@@ -1,0 +1,8 @@
+Ticket number: 3064
+Filed: 2026-08-18 19:07:36
+Filed by: Simone Fischer
+About responder: Halfmoon
+Subject: Filters went back to default
+Status: closed
+
+My saved filters disappeared this morning and the console went back to showing everyone. I did not notice for a while and was looking at the wrong list. Could it warn me when that happens?

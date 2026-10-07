@@ -1,0 +1,8 @@
+Ticket number: 3013
+Filed: 2026-07-13 08:44:19
+Filed by: Graham Petrov
+About responder: The Longcast
+Subject: Text on status badges is too small
+Status: closed
+
+The engaged and available badges are hard to tell apart unless I lean right in to the screen. A larger size or a stronger color difference would help a great deal.

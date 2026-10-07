@@ -1,0 +1,8 @@
+Ticket number: 3134
+Filed: 2026-09-04 08:38:56
+Filed by: Desmond Okafor
+About responder: The Undertow
+Subject: Filters reset after update
+Status: open
+
+Twice now my saved filters have been wiped overnight. I assume there was an update. I would rather it told me than quietly reset.

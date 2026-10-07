@@ -1,0 +1,8 @@
+Ticket number: 3084
+Filed: 2026-08-23 13:38:20
+Filed by: Linda Pruitt
+About responder: Farlight
+Subject: Responder detail panel covers the map
+Status: open
+
+The responder detail panel opens on top of the map, so I cannot see where Farlight is while I am reading her details. Could it open to the side?

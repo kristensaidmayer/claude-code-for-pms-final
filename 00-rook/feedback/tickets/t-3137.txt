@@ -1,0 +1,8 @@
+Ticket number: 3137
+Filed: 2026-09-04 16:04:47
+Filed by: Yusuf Demir
+About responder: Corporal Ashgrove
+Subject: Screen reader support
+Status: open
+
+One of our handlers uses a screen reader. Several buttons on the console are read out as "button" with no name, so she cannot tell them apart.

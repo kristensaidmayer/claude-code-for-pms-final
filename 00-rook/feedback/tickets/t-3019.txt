@@ -1,0 +1,8 @@
+Ticket number: 3019
+Filed: 2026-07-18 20:37:43
+Filed by: Desmond Okafor
+About responder: The Undertow
+Subject: Capability tags jump around
+Status: closed
+
+On the responder detail panel, The Undertow's capability tags come up in a different order each time I open it. Minor, but it makes it harder to check at a glance.

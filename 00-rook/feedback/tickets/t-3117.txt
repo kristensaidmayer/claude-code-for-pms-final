@@ -1,0 +1,8 @@
+Ticket number: 3117
+Filed: 2026-08-30 15:18:37
+Filed by: Farid Haddad
+About responder: Cindermark
+Subject: Dark mode for the console
+Status: open
+
+Is there any plan for a dark version of the console? I work nights and it is the brightest thing in the room by a long way. I have turned my screen down as far as it goes.

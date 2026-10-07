@@ -1,0 +1,8 @@
+Ticket number: 3074
+Filed: 2026-08-21 08:52:57
+Filed by: Marjorie Sung
+About responder: Nightwell
+Subject: Vest plate replacement
+Status: open
+
+Nightwell has a cracked vest plate. I have ordered a replacement, but the priority field on the requisition does not seem to change how quickly it moves. How do I mark something as genuinely urgent?

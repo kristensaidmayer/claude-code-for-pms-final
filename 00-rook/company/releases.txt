@@ -1,0 +1,58 @@
+# Releases
+Rook Dispatch release notes, 4.x series, as published to handlers on the morning of each release. Items deferred from a release are not listed here; see the Q3 roadmap for planned work.
+
+## Releases
+Columns: What changed (rich text), Ship date (date), Release (title)
+3 rows:
+
+1. 4.0
+   - What changed: New console navigation. Responder profile redesign. Audit log for routing overrides.
+   - Ship date: 2026-04-07
+
+2. 4.2
+   - What changed: Change to who gets pinged (proximity weighted up). Ping wait cut from 90 to 60 seconds. Console filters persist. Three defect fixes.
+   - Ship date: 2026-08-12
+
+3. 4.1
+   - What changed: Proximity now uses a travel-time estimate. Bulk callout. Phone push delivery reliability.
+   - Ship date: 2026-06-16
+
+---
+
+# 4.0
+
+Properties:
+- What changed: New console navigation. Responder profile redesign. Audit log for routing overrides.
+- Ship date: 2026-04-07
+
+Released 7 April 2026. Published to handlers on the morning of release.
+- New console navigation.
+- Responder profile redesign.
+- Audit log for routing overrides.
+
+---
+
+# 4.1
+
+Properties:
+- What changed: Proximity now uses a travel-time estimate. Bulk callout. Phone push delivery reliability.
+- Ship date: 2026-06-16
+
+Released 16 June 2026. Published to handlers on the morning of release.
+- Proximity now uses a travel-time estimate rather than straight-line distance.
+- Bulk callout for incidents requiring more than one responder.
+- Phone push delivery reliability improvements.
+
+---
+
+# 4.2
+
+Properties:
+- What changed: Change to who gets pinged (proximity weighted up). Ping wait cut from 90 to 60 seconds. Console filters persist. Three defect fixes.
+- Ship date: 2026-08-12
+
+Released 12 August 2026. Published to handlers on the morning of release.
+- Change to who gets pinged. Proximity is weighted more heavily relative to recent acceptance history when ranking responders for a callout. Long requested by responders who cover wide areas.
+- Ping wait reduced from 90 seconds to 60 seconds. Pings that go unanswered move to the next responder sooner.
+- Console filter selections now persist between sessions.
+- Three defect fixes: duplicate push notification when a ping is sent again; capability tag ordering in the responder detail panel; incorrect time zone on the coverage report export.

@@ -1,0 +1,8 @@
+Ticket number: 3031
+Filed: 2026-08-01 17:12:15
+Filed by: Marjorie Sung
+About responder: Nightwell
+Subject: Same alert sound for everything
+Status: closed
+
+Every alert on the console makes the same sound, so I have to look up every time to see what it is. Could there be a different sound for different kinds of alert?

@@ -1,0 +1,8 @@
+Ticket number: 3046
+Filed: 2026-08-14 10:11:24
+Filed by: Marjorie Sung
+About responder: Nightwell
+Subject: Filters saved but the wrong ones
+Status: closed
+
+The console kept my filters, but it kept the ones from my colleague's shift, not mine. We share a computer. Can each sign-in have its own?

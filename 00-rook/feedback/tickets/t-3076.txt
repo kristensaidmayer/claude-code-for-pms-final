@@ -1,0 +1,8 @@
+Ticket number: 3076
+Filed: 2026-08-21 09:51:26
+Filed by: Farid Haddad
+About responder: Cindermark
+Subject: Saved filters — how do I clear them?
+Status: closed
+
+The console now remembers my filters, which is good, but I cannot find a way to clear them all at once. I have to untick each one.

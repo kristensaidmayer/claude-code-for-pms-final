@@ -1,0 +1,8 @@
+Ticket number: 3144
+Filed: 2026-09-07 08:11:52
+Filed by: Simone Fischer
+About responder: Halfmoon
+Subject: Training for a new handler
+Status: open
+
+We have a new handler starting next month. Is there any training material or a guided tour of the console we can give them?

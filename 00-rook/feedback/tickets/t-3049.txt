@@ -1,0 +1,8 @@
+Ticket number: 3049
+Filed: 2026-08-14 12:24:26
+Filed by: Linda Pruitt
+About responder: Farlight
+Subject: Password reset email slow
+Status: closed
+
+The password reset email took almost an hour to arrive this morning. I was locked out of the console for all of that time.

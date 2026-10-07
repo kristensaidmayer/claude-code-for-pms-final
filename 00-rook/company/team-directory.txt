@@ -1,0 +1,41 @@
+# Team directory
+Product, engineering, design, support and data for Rook Dispatch. Last updated 2 September 2026.
+
+## Team directory
+Columns: Role (rich text), Location (rich text), Owns (rich text), Name (title)
+7 rows:
+
+1. Wen Li
+   - Role: Staff Engineer, Dispatch
+   - Location: Berlin
+   - Owns: Built the part that decides who gets pinged. Away 14–24 August 2026.
+
+2. Marcus Oyelaran
+   - Role: Engineering Manager, Dispatch
+   - Location: Site Aleph
+   - Owns: The Dispatch engineering team
+
+3. Priya Raghunathan
+   - Role: Product Manager, Dispatch (left 21 August 2026)
+   - Location: —
+   - Owns: —
+
+4. Helen Achebe
+   - Role: Director of Product
+   - Location: Site Aleph
+   - Owns: Roadmap and commitments
+
+5. Sofia Marino
+   - Role: Product Designer
+   - Location: Site Aleph
+   - Owns: The console and the phone app. Ran the September interviews.
+
+6. Ravi Menon
+   - Role: Data Analyst
+   - Location: Singapore
+   - Owns: The numbers. Reports weekly on how often responders are taking their pings.
+
+7. Nadia Hoffmann
+   - Role: Support Lead
+   - Location: Berlin
+   - Owns: The tickets

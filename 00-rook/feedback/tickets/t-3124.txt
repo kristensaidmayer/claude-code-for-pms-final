@@ -1,0 +1,8 @@
+Ticket number: 3124
+Filed: 2026-09-01 16:47:35
+Filed by: Renata Kovač
+About responder: Stormwrack
+Subject: Filter badge hard to see
+Status: open
+
+Now that filters stay on between sessions, I sometimes forget one is on. The small badge showing a filter is active is easy to miss.

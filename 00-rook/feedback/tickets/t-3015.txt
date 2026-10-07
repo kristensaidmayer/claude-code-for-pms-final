@@ -1,0 +1,8 @@
+Ticket number: 3015
+Filed: 2026-07-14 19:39:02
+Filed by: Beatrice Calloway
+About responder: The Drift
+Subject: Responder list sorting
+Status: closed
+
+The list of responders on my screen sorts by when they were added, not by name. Could it remember the order I choose?

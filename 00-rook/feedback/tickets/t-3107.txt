@@ -1,0 +1,8 @@
+Ticket number: 3107
+Filed: 2026-08-28 20:17:13
+Filed by: Linda Pruitt
+About responder: Farlight
+Subject: Console logs me out too often
+Status: open
+
+The console signs me out after what feels like twenty minutes of not clicking anything. On a quiet shift I am watching it, not clicking it, and then I have to sign in again at the worst moment.

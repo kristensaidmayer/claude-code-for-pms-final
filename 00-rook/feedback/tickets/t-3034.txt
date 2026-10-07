@@ -1,0 +1,8 @@
+Ticket number: 3034
+Filed: 2026-08-04 12:26:00
+Filed by: Teresa Alvarez
+About responder: Ironvale
+Subject: Push notifications unreliable on older phones
+Status: closed
+
+Ironvale has an older phone and some days the notifications come through late or not at all. Is there a list of phones that are supported?

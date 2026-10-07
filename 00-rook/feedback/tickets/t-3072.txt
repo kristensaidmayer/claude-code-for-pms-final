@@ -1,0 +1,8 @@
+Ticket number: 3072
+Filed: 2026-08-20 12:36:22
+Filed by: Teresa Alvarez
+About responder: Ironvale
+Subject: Filters went back to default
+Status: open
+
+My saved filters disappeared this morning and the console went back to showing everyone. I did not notice for a while and was looking at the wrong list. Could it warn me when that happens?

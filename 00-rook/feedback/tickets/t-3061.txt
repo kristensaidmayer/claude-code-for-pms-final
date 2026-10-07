@@ -1,0 +1,8 @@
+Ticket number: 3061
+Filed: 2026-08-18 09:34:11
+Filed by: Marjorie Sung
+About responder: Nightwell
+Subject: Filter badge hard to see
+Status: closed
+
+Now that filters stay on between sessions, I sometimes forget one is on. The small badge showing a filter is active is easy to miss.

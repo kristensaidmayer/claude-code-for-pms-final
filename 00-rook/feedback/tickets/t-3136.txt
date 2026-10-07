@@ -1,0 +1,8 @@
+Ticket number: 3136
+Filed: 2026-09-04 11:07:31
+Filed by: Marjorie Sung
+About responder: Nightwell
+Subject: Profile photo will not update
+Status: open
+
+I uploaded a new photo for Nightwell twice and the old one still shows in the console. Cleared my browser and tried a different computer. Same result.

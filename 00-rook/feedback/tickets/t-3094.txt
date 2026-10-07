@@ -1,0 +1,8 @@
+Ticket number: 3094
+Filed: 2026-08-25 16:26:14
+Filed by: Owen Bramwell
+About responder: Sgt. Falkirk
+Subject: Incident feed scrolls back to the top
+Status: open
+
+When a new incident comes in, the feed jumps back to the top and I lose my place. I was halfway down reading something.

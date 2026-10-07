@@ -1,0 +1,8 @@
+Ticket number: 3133
+Filed: 2026-09-03 17:44:46
+Filed by: Graham Petrov
+About responder: The Longcast
+Subject: Console slow on Monday mornings
+Status: open
+
+Every Monday between about 8 and 9 the console takes a long time to load the coverage view. Other days it is fine. Not urgent, but it happens every week.

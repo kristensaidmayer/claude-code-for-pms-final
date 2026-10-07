@@ -1,0 +1,8 @@
+Ticket number: 3059
+Filed: 2026-08-16 15:17:56
+Filed by: Renata Kovač
+About responder: Stormwrack
+Subject: Cannot change Stormwrack's phone number
+Status: closed
+
+Stormwrack has a new phone number. The profile page will not let me save the new one; it says the format is wrong, but it is a normal number.

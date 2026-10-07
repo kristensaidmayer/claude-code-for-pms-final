@@ -1,0 +1,8 @@
+Ticket number: 3082
+Filed: 2026-08-23 10:20:56
+Filed by: Simone Fischer
+About responder: Halfmoon
+Subject: Responder list sorting
+Status: closed
+
+The list of responders on my screen sorts by when they were added, not by name. Could it remember the order I choose?

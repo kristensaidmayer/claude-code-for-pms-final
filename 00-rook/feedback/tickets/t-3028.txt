@@ -1,0 +1,8 @@
+Ticket number: 3028
+Filed: 2026-07-29 10:11:06
+Filed by: Renata Kovač
+About responder: Stormwrack
+Subject: Incident feed scrolls back to the top
+Status: closed
+
+When a new incident comes in, the feed jumps back to the top and I lose my place. I was halfway down reading something.

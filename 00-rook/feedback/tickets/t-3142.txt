@@ -1,0 +1,8 @@
+Ticket number: 3142
+Filed: 2026-09-06 14:44:31
+Filed by: Owen Bramwell
+About responder: Sgt. Falkirk
+Subject: Text on status badges is too small
+Status: open
+
+The engaged and available badges are hard to tell apart unless I lean right in to the screen. A larger size or a stronger color difference would help a great deal.

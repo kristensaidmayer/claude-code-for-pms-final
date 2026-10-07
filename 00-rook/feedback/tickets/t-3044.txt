@@ -1,0 +1,8 @@
+Ticket number: 3044
+Filed: 2026-08-13 11:55:16
+Filed by: Beatrice Calloway
+About responder: The Drift
+Subject: Filters reset after update
+Status: open
+
+Twice now my saved filters have been wiped overnight. I assume there was an update. I would rather it told me than quietly reset.

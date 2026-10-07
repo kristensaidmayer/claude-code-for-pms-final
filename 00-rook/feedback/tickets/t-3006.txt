@@ -1,0 +1,8 @@
+Ticket number: 3006
+Filed: 2026-07-05 10:32:53
+Filed by: Linda Pruitt
+About responder: Farlight
+Subject: Bulk callout — how does it work?
+Status: closed
+
+I saw the note about sending one job to more than one responder at once. I cannot find the button. Where is it?

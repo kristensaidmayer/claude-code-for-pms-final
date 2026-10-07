@@ -1,0 +1,114 @@
+# Q3 roadmap
+Q3 2026, Rook Dispatch and Rook Supply. Reviewed monthly by Product; status reflects the position at the last review. Items listed against a numbered release are considered locked. Changes to a committed item are handled through Product, not directly.
+
+## Q3 roadmap
+Columns: Target release (rich text), Last reviewed (date), Owner (rich text), Status (select), Item (title)
+6 rows:
+
+1. Change to who gets pinged
+   - Target release: 4.2
+   - Last reviewed: 2026-06-30
+   - Owner: Priya
+   - Status: Committed
+
+2. Availability Confidence
+   - Target release: 4.2
+   - Last reviewed: 2026-06-30
+   - Owner: Priya
+   - Status: Committed
+
+3. Handler phone app
+   - Target release: Q4
+   - Last reviewed: 2026-06-30
+   - Owner: Priya
+   - Status: Exploring
+
+4. Requisition approval chains
+   - Target release: 4.3
+   - Last reviewed: 2026-06-30
+   - Owner: Priya
+   - Status: Committed
+
+5. Ping timeout tuning
+   - Target release: 4.2
+   - Last reviewed: 2026-06-30
+   - Owner: Priya
+   - Status: Committed
+
+6. Shared cover between responders
+   - Target release: Q4
+   - Last reviewed: 2026-06-30
+   - Owner: Priya
+   - Status: Exploring
+
+---
+
+# Change to who gets pinged
+
+Properties:
+- Target release: 4.2
+- Last reviewed: 2026-06-30
+- Owner: Priya
+- Status: Committed
+
+Rook Dispatch. Weight proximity more heavily when ranking who gets pinged for a callout.
+
+---
+
+# Availability Confidence
+
+Properties:
+- Target release: 4.2
+- Last reviewed: 2026-06-30
+- Owner: Priya
+- Status: Committed
+
+Rook Dispatch. Show a confidence score alongside a responder's stated availability.
+
+---
+
+# Handler phone app
+
+Properties:
+- Target release: Q4
+- Last reviewed: 2026-06-30
+- Owner: Priya
+- Status: Exploring
+
+A phone app for handlers.
+
+---
+
+# Requisition approval chains
+
+Properties:
+- Target release: 4.3
+- Last reviewed: 2026-06-30
+- Owner: Priya
+- Status: Committed
+
+Rook Supply. A second approval step for large requisitions.
+
+---
+
+# Ping timeout tuning
+
+Properties:
+- Target release: 4.2
+- Last reviewed: 2026-06-30
+- Owner: Priya
+- Status: Committed
+
+Rook Dispatch. Tune how long a ping waits for an answer before it moves on.
+
+---
+
+# Shared cover between responders
+
+Properties:
+- Target release: Q4
+- Last reviewed: 2026-06-30
+- Owner: Priya
+- Status: Exploring
+
+Rook Dispatch. Responders in different parts of the city covering callouts for each other when the usual responder is unavailable.

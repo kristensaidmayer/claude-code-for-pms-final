@@ -1,0 +1,8 @@
+Ticket number: 3119
+Filed: 2026-08-31 17:50:16
+Filed by: Yusuf Demir
+About responder: Corporal Ashgrove
+Subject: Keyboard shortcuts
+Status: open
+
+Are there keyboard shortcuts for the console? I would like to switch between the coverage view and the incident feed without reaching for the mouse.

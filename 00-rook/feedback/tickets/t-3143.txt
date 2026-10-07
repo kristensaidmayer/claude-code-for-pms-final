@@ -1,0 +1,8 @@
+Ticket number: 3143
+Filed: 2026-09-06 18:23:32
+Filed by: Teresa Alvarez
+About responder: Ironvale
+Subject: Request: mark a responder as on leave
+Status: open
+
+Ironvale is away on leave for a week. There is no way to show that in the console except setting her unavailable, which looks the same as being busy. A leave status would help.

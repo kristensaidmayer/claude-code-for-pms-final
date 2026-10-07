@@ -1,0 +1,8 @@
+Ticket number: 3042
+Filed: 2026-08-12 16:45:35
+Filed by: Owen Bramwell
+About responder: Sgt. Falkirk
+Subject: Filter remembered on the wrong computer
+Status: closed
+
+I use the console on two computers. The filters I save on one do not appear on the other. Is that expected?

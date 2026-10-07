@@ -1,0 +1,8 @@
+Ticket number: 3050
+Filed: 2026-08-14 15:37:27
+Filed by: Simone Fischer
+About responder: Halfmoon
+Subject: Availability window when traveling
+Status: closed
+
+Halfmoon is working from a different city for two weeks. When I set her availability hours, the console seems to use my time zone, not the one she is in. Which one does it use?

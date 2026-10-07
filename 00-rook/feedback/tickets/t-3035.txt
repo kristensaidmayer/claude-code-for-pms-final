@@ -1,0 +1,8 @@
+Ticket number: 3035
+Filed: 2026-08-05 19:44:12
+Filed by: Simone Fischer
+About responder: Halfmoon
+Subject: Request: mark a responder as on leave
+Status: closed
+
+Halfmoon is away on leave for a week. There is no way to show that in the console except setting her unavailable, which looks the same as being busy. A leave status would help.

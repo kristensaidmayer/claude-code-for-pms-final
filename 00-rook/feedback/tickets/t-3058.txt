@@ -1,0 +1,8 @@
+Ticket number: 3058
+Filed: 2026-08-16 11:35:51
+Filed by: Graham Petrov
+About responder: The Longcast
+Subject: Console tab title
+Status: closed
+
+When I have several browser tabs open, the console's tab just says "Console". Could it show the name of the view I am on?

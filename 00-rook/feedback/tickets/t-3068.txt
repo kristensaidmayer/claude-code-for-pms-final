@@ -1,0 +1,8 @@
+Ticket number: 3068
+Filed: 2026-08-19 17:39:16
+Filed by: Beatrice Calloway
+About responder: The Drift
+Subject: Handler handover notes
+Status: closed
+
+When I hand over to the overnight handler, there is nowhere in the console to leave a note for them. We use a paper notebook at the moment. A shared notes area would help.

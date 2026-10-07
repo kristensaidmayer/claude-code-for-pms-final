@@ -1,0 +1,8 @@
+Ticket number: 3005
+Filed: 2026-07-04 19:01:28
+Filed by: Yusuf Demir
+About responder: Corporal Ashgrove
+Subject: Please save my filter settings
+Status: closed
+
+Following up on an older request: I would like the console to keep my filters between sessions. I set the same three filters every single shift.

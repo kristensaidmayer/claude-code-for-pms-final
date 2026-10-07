@@ -1,0 +1,8 @@
+Ticket number: 3085
+Filed: 2026-08-23 16:46:23
+Filed by: Graham Petrov
+About responder: The Longcast
+Subject: Filter remembered on the wrong computer
+Status: closed
+
+I use the console on two computers. The filters I save on one do not appear on the other. Is that expected?

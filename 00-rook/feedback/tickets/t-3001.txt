@@ -1,0 +1,8 @@
+Ticket number: 3001
+Filed: 2026-06-29 10:27:18
+Filed by: Graham Petrov
+About responder: The Longcast
+Subject: Equipment catalog search
+Status: closed
+
+Searching the equipment catalog for "plate" gives me forty results and most of them have nothing to do with armor. Could we have category filters, or search by what the item is for?

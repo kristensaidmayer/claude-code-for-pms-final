@@ -1,0 +1,8 @@
+Ticket number: 3115
+Filed: 2026-08-30 12:37:24
+Filed by: Teresa Alvarez
+About responder: Ironvale
+Subject: Filters saved but the wrong ones
+Status: open
+
+The console kept my filters, but it kept the ones from my colleague's shift, not mine. We share a computer. Can each sign-in have its own?

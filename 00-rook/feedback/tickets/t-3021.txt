@@ -1,0 +1,8 @@
+Ticket number: 3021
+Filed: 2026-07-20 09:44:30
+Filed by: Linda Pruitt
+About responder: Farlight
+Subject: Vest plate replacement
+Status: closed
+
+Farlight has a cracked vest plate. I have ordered a replacement, but the priority field on the requisition does not seem to change how quickly it moves. How do I mark something as genuinely urgent?

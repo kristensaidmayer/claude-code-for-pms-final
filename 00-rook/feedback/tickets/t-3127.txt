@@ -1,0 +1,8 @@
+Ticket number: 3127
+Filed: 2026-09-02 13:32:27
+Filed by: Owen Bramwell
+About responder: Sgt. Falkirk
+Subject: Same alert sound for everything
+Status: open
+
+Every alert on the console makes the same sound, so I have to look up every time to see what it is. Could there be a different sound for different kinds of alert?

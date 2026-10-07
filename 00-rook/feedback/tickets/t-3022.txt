@@ -1,0 +1,8 @@
+Ticket number: 3022
+Filed: 2026-07-21 18:28:56
+Filed by: Owen Bramwell
+About responder: Sgt. Falkirk
+Subject: Grapple line retracts at wrong speed in cold weather
+Status: closed
+
+Sgt. Falkirk's grapple line reels back in much slower when it is below freezing. We noticed it on two night jobs this month. I have filed a field failure report as well, but wanted to raise it here in case it is a known issue.

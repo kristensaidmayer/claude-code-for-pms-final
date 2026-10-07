@@ -1,0 +1,8 @@
+Ticket number: 3003
+Filed: 2026-07-01 20:04:01
+Filed by: Beatrice Calloway
+About responder: The Drift
+Subject: Notes field cuts off
+Status: closed
+
+The notes box on The Drift's profile stops at what looks like 250 characters. I keep notes about medical and equipment needs there and it is not enough room.

@@ -1,0 +1,8 @@
+Ticket number: 3116
+Filed: 2026-08-30 14:25:24
+Filed by: Renata Kovač
+About responder: Stormwrack
+Subject: Availability window when traveling
+Status: open
+
+Stormwrack is working from a different city for two weeks. When I set his availability hours, the console seems to use my time zone, not the one he is in. Which one does it use?

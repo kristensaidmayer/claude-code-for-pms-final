@@ -1,0 +1,8 @@
+Ticket number: 3030
+Filed: 2026-07-30 14:48:40
+Filed by: Beatrice Calloway
+About responder: The Drift
+Subject: Request: show when gear is due back
+Status: closed
+
+When The Drift's equipment is out for maintenance, the console shows that it is away but not when it is due back. A date would save me a phone call each time.

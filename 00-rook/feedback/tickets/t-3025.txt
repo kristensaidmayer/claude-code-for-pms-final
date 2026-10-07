@@ -1,0 +1,8 @@
+Ticket number: 3025
+Filed: 2026-07-24 16:04:46
+Filed by: Renata Kovač
+About responder: Stormwrack
+Subject: Coverage report export has the wrong times
+Status: closed
+
+When I export the coverage report, every time on it is out by several hours. It looks like it is using the wrong time zone.

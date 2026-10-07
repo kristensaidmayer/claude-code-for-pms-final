@@ -1,0 +1,8 @@
+Ticket number: 3012
+Filed: 2026-07-11 18:49:19
+Filed by: Farid Haddad
+About responder: Cindermark
+Subject: Filters reset every time I open the console
+Status: closed
+
+Every time I open the console I have to set my filters again — responder, capability tags, all of it. It takes five minutes each time. Could the console remember them?

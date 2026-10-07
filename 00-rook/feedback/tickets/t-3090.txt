@@ -1,0 +1,8 @@
+Ticket number: 3090
+Filed: 2026-08-25 09:49:13
+Filed by: Owen Bramwell
+About responder: Sgt. Falkirk
+Subject: Notes field cuts off
+Status: open
+
+The notes box on Sgt. Falkirk's profile stops at what looks like 250 characters. I keep notes about medical and equipment needs there and it is not enough room.

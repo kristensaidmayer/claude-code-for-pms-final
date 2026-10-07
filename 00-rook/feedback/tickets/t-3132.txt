@@ -1,0 +1,8 @@
+Ticket number: 3132
+Filed: 2026-09-03 10:25:54
+Filed by: Beatrice Calloway
+About responder: The Drift
+Subject: Cannot change The Drift's phone number
+Status: open
+
+The Drift has a new phone number. The profile page will not let me save the new one; it says the format is wrong, but it is a normal number.

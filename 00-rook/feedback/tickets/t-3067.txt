@@ -1,0 +1,8 @@
+Ticket number: 3067
+Filed: 2026-08-19 15:31:38
+Filed by: Farid Haddad
+About responder: Cindermark
+Subject: Profile photo will not update
+Status: open
+
+I uploaded a new photo for Cindermark twice and the old one still shows in the console. Cleared my browser and tried a different computer. Same result.

@@ -1,0 +1,8 @@
+Ticket number: 3020
+Filed: 2026-07-19 18:21:28
+Filed by: Farid Haddad
+About responder: Cindermark
+Subject: Console logs me out too often
+Status: closed
+
+The console signs me out after what feels like twenty minutes of not clicking anything. On a quiet shift I am watching it, not clicking it, and then I have to sign in again at the worst moment.

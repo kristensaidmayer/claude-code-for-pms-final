@@ -1,0 +1,8 @@
+Ticket number: 3092
+Filed: 2026-08-25 13:14:10
+Filed by: Yusuf Demir
+About responder: Corporal Ashgrove
+Subject: Grapple line retracts at wrong speed in cold weather
+Status: open
+
+Corporal Ashgrove's grapple line reels back in much slower when it is below freezing. We noticed it on two night jobs this month. I have filed a field failure report as well, but wanted to raise it here in case it is a known issue.

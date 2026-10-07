@@ -1,0 +1,8 @@
+Ticket number: 3037
+Filed: 2026-08-07 20:01:50
+Filed by: Farid Haddad
+About responder: Cindermark
+Subject: Capability tag legend hard to find
+Status: closed
+
+The list explaining what each capability tag means is buried behind the responder detail panel. I only need it now and then, but when I do I can never remember where it lives.

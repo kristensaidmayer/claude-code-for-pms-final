@@ -1,0 +1,8 @@
+Ticket number: 3079
+Filed: 2026-08-22 13:27:16
+Filed by: Renata Kovač
+About responder: Stormwrack
+Subject: Password reset email slow
+Status: closed
+
+The password reset email took almost an hour to arrive this morning. I was locked out of the console for all of that time.

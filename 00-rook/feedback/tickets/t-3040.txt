@@ -1,0 +1,8 @@
+Ticket number: 3040
+Filed: 2026-08-10 20:03:14
+Filed by: Teresa Alvarez
+About responder: Ironvale
+Subject: Double notifications
+Status: closed
+
+Every so often Ironvale gets the same notification twice, a few seconds apart. It has happened three or four times this month.
