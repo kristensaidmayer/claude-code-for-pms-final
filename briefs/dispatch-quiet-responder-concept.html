@@ -139,11 +139,11 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line)
     <p>The goal is to stop responders silently falling out of the rotation. Understanding why they did comes second, and waits.</p>
     <div class="tbl">
       <table>
-        <thead><tr><th>Phase</th><th>What</th><th>Solves</th><th>Depends on</th></tr></thead>
+        <thead><tr><th>Phase</th><th>What</th><th>Solves</th><th>Depends on</th><th>Asked now?</th></tr></thead>
         <tbody>
-          <tr><td><span class="ph">1</span></td><td><b>90s wait, rebuilt score, roster alarm.</b> Score = share of the last 30 home-area pings taken, rebuilt from the ping log on every start.</td><td>The four lockouts, bad scoring, recovery after a restart</td><td>Wen Li's replay</td></tr>
-          <tr><td><span class="ph">2</span></td><td><b>Quiet badge and check-in on Kip's card.</b> Informational. Changes nothing in routing.</td><td>Nobody saw it for five weeks</td><td>Phase 1, Sofia Marino's card design</td></tr>
-          <tr><td><span class="ph later">3</span></td><td><b>Responder screens:</b> recent pings, check-in replies, test ping, "back in rotation".</td><td>Helping a responder understand why</td><td>Push receipts, and talking to responders first</td></tr>
+          <tr><td><span class="ph">1</span></td><td><b>90s wait, rebuilt score, roster alarm.</b> Score = share of the last 30 home-area pings taken, rebuilt from the ping log on every start.</td><td>The four lockouts, bad scoring, recovery after a restart</td><td>Wen Li's replay, a release slot</td><td><b>Yes</b>, once three conditions are met</td></tr>
+          <tr><td><span class="ph">2</span></td><td><b>Quiet badge and check-in on Kip's card.</b> Informational. Changes nothing in routing.</td><td>Nobody saw it for five weeks</td><td>Phase 1, Sofia Marino's card design, push channel (A4)</td><td>No. Decide after phase 1 shows results</td></tr>
+          <tr><td><span class="ph later">3</span></td><td><b>Responder screens:</b> recent pings, check-in replies, test ping, "back in rotation".</td><td>Helping a responder understand why</td><td>Push receipts, and talking to responders first</td><td>No. Not approved</td></tr>
         </tbody>
       </table>
     </div>
@@ -193,7 +193,7 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line)
           <tr><th>Clears</th><td>4 or more of their last 5 pings <b>taken</b>. Automatic. Kip can add a "checked in" note but cannot dismiss it.</td></tr>
           <tr><th>Why harder to clear</th><td>Stops it flapping. Clearing as soon as fewer than 3 are missed gave up to 3 episodes for one responder. Clearing at 4 takes of 5 gave none more than 1.</td></tr>
           <tr><th>Stuck Quiet</th><td>After 14 days it becomes a line in the weekly report to Helen. Never cleared by time alone.</td></tr>
-          <tr><th>Roster alarm</th><td>7-day missed-ping rate above 5%, or 25% of the roster Quiet at once, alerts Marcus Oyelaran. This fires first if a deploy breaks everyone, and would have fired on 12 Aug.</td></tr>
+          <tr><th>Roster alarm</th><td>7-day missed-ping rate above 5% alerts Marcus Oyelaran (the 25%-of-roster-Quiet trigger joins in phase 2). This fires first if a deploy breaks everyone, and would have fired on 12 Aug.</td></tr>
         </tbody>
       </table>
     </div>
@@ -244,13 +244,13 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line)
         </tbody>
       </table>
     </div>
-    <p class="muted">The brief has all 14 assumptions, with acceptance criteria and owners.</p>
+    <p class="muted">The brief has all 20 assumptions, with the conditions before ship, acceptance criteria and owners.</p>
   </section>
 
   <section>
     <h2>What it deliberately does not do</h2>
     <ul class="list">
-      <li>Revert 4.2, or let anyone change a rank by hand. Nobody sees the score.</li>
+      <li>Revert the rest of 4.2 (only the ping wait goes back from 60 to 90 seconds), or let anyone change a rank by hand. Nobody sees the score.</li>
       <li>Make misses free, which rewards never answering. A miss counts, but only against home-area pings, and it can be recovered.</li>
       <li>Write to the Responder Availability Record, which Supply reads. Quiet is display only.</li>
       <li>Add an out-of-area score yet (next release, after Wen's replay), or start mutual aid (Q4).</li>
@@ -260,12 +260,17 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line)
 
   <div class="ask">
     <h2>Decisions for you, Helen</h2>
+    <p class="muted">Needed now</p>
     <ol class="list">
-      <li><b>The goal.</b> Prevent responders silently falling out first, with the responder screens held back. Agree?</li>
-      <li><b>The action.</b> If Quiet appears on Kip's card tomorrow, is "get in touch within 24 hours" what we expect from him?</li>
-      <li><b>Sequencing.</b> Does the 90s wait plus the rebuilt score go out alongside the badge, or ahead of it? I recommend ahead, with the roster alarm.</li>
+      <li><b>Phase 1.</b> Approve the 90s wait, the rebuilt score and the roster alarm, once Wen's replay agrees, Ravi's data after 6 Sep shows the four still locked out, and Marcus confirms a release slot? This is the only approval asked for today.</li>
+      <li><b>The 60s wait.</b> What was it meant to achieve, and are you comfortable undoing it?</li>
+      <li><b>Release capacity.</b> Phase 1 takes a slot. Which gives way if it is tight: Availability Confidence or 4.3 requisition approval chains?</li>
+    </ol>
+    <p class="muted">Later, with phase 1 results (week 2)</p>
+    <ol class="list" start="4">
+      <li><b>Phase 2.</b> Build the badge and check-in? Do you expect Kip to get in touch within 24 hours when Quiet appears? I recommend deciding after Kip and one other handler have been asked.</li>
       <li><b>The threshold.</b> 3 of 5, or 3 of 7 to catch dips like Nightwell's?</li>
-      <li><b>Responders seeing their own outcomes.</b> Comfortable with that when we get to phase 3?</li>
+      <li><b>Phase 3.</b> Comfortable with responders seeing their own outcomes? Not before interviews.</li>
     </ol>
   </div>
 
@@ -339,7 +344,7 @@ footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line)
     pill.className = "pill" + (quiet ? " quiet" : (step === 4 && cleared ? " good" : ""));
     pill.textContent = quiet ? "Quiet" : (step === 4 && cleared ? "Back in rotation" : "Available");
     stat.textContent = step === 1 ? "No new callouts" : (step === 4 ? "Pinged in the last 7 days: " + (1 + lastTake) + " · usual 11" : "Pinged in the last 7 days: 1 · usual 11");
-    $("galeStat").textContent = step === 1 ? "Pinged this week: 19 · usual 13" : "Busier than usual: 19 pings a week · usual 13";
+    $("galeStat").textContent = step === 1 ? "Pinged this week: 19 · usual 13" : "19 pings in 7 days · usual 13";
     $("dotsBox").hidden = step === 1;
     $("qcount").textContent = step === 1 ? "Handler: Kip · Sat 5 Sep, 11:02pm" : "Handler: Kip · Quiet: " + (cleared ? 0 : 1);
     renderDots();

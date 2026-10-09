@@ -1,6 +1,10 @@
 # Brief: keeping a responder in the rotation
 
-Rook Dispatch · for Helen Achebe (Director of Product) · written 9 Oct 2026 · ping data through 6 Sep 2026
+Rook Dispatch · for Helen Achebe (Director of Product) · written 9 Oct 2026 · ping data through 6 Sep 2026 (about five weeks old, see A7)
+
+**Owners.** Author and week-2 reviewer: Kristen Mayer, PM, Rook Dispatch. Decision: Helen Achebe. Delivery: Marcus Oyelaran (to confirm, A6). Routing logic and replay: Wen Li.
+
+**What Helen is asked to approve now: phase 1 only,** and only once the three conditions in "Conditions before ship" are met. Phases 2 and 3 are proposals. They are described so the whole shape is visible, but each needs its own decision later (see Decisions for Helen).
 
 Click-through: `dispatch-quiet-responder-concept.html`. Where I did not know something, I made an assumption and listed it in the Assumptions table, with who confirms it and what changes if it is wrong.
 
@@ -22,13 +26,13 @@ Meteor Mite exists in our systems as capability tags, availability and ping hist
 
 **The goal is to stop responders silently falling out of the rotation.** Understanding why they did comes second and waits.
 
-| Phase | What | Solves | Depends on |
-|---|---|---|---|
-| 1 | 90s ping wait, rebuilt score, and a roster-level alarm | The four lockouts, bad scoring, recovery after a restart | Wen Li's replay |
-| 2 | Quiet badge and check-in on Kip's card | Nobody saw it for five weeks | Phase 1, Sofia Marino's card design |
-| 3 | Responder screens: recent pings, test ping, "back in rotation" | Helping a responder understand why | Push receipts, and a responder interview round |
+| Phase | What | Solves | Depends on | Owner | Asked now? |
+|---|---|---|---|---|---|
+| 1 | 90s ping wait, rebuilt score, and a roster-level alarm (7-day missed-ping rate above 5%; the 25% Quiet trigger joins in phase 2) | The four lockouts, bad scoring, recovery after a restart | Wen Li's replay, a release slot | Marcus Oyelaran, with Wen Li | **Yes**, once conditions are met |
+| 2 | Quiet badge and check-in on Kip's card, plus the 14-day line in the weekly report | Nobody saw it for five weeks | Phase 1, Sofia Marino's card design, A4 | Sofia Marino | No. Decide after phase 1 shows results |
+| 3 | Responder screens: recent pings, test ping, "back in rotation" | Helping a responder understand why | Push receipts, and a responder interview round | Sofia Marino | No. Not approved |
 
-**What changes for Kip (phase 2).** Each coverage card says how busy the responder is against their usual week: "1 ping in 7 days, usually 11", with the last five outcomes. When 3 of the last 5 pings are missed, the card shows a Quiet badge and says so in plain words. Kip gets a "Send check-in" button, which is the text he sends today, logged. The Gale's card says it is busier than usual.
+**What changes for Kip (phase 2).** Each coverage card says how busy the responder is against their usual week: "1 ping in 7 days, usually 11", with the last five outcomes. When 3 of the last 5 pings are missed, the card shows a Quiet badge and says so in plain words. Kip gets a "Send check-in" button, which replaces the text he sends today with a logged push to the responder's app (if the push channel cannot carry it, A4, it becomes a logged note and Kip still texts). Volume is shown as a plain number, never as a judgement: The Gale's card reads "19 pings in 7 days, usually 13". If The Gale is ever Quiet at the same time, the card shows both facts side by side ("3 of last 5 missed"), so a busy responder who is missing pings is visible and nothing contradicts itself (A15).
 
 **What changes for Meteor Mite.**
 - Phase 1: routing priority is rebuilt from their own history and the wait is 90 seconds again. That is what puts them back in the rotation.
@@ -38,11 +42,11 @@ Meteor Mite exists in our systems as capability tags, availability and ping hist
 
 ## What it deliberately does not do
 
-- **It does not revert 4.2.** Proximity stays weighted up. Responders who cover wide areas asked for it.
+- **It does not revert the rest of 4.2.** Proximity stays weighted up. Responders who cover wide areas asked for it. It does undo one 4.2 change: the ping wait goes back from 60 to 90 seconds. This brief does not say what the 60s wait was meant to achieve. Helen and Marcus to confirm (A16); the guardrail on time-to-accept is the check on what we give up.
 - **It does not let anyone change a rank by hand**, and no one sees the score or rank. Handlers and responders see counts and outcomes.
 - **It does not make misses free.** That rewards never answering. A miss still counts, but only against home-area pings, and it can be recovered.
 - **It does not add a separate out-of-area score yet.** That is the next release, after Wen's replay. Out-of-area pings did most of the early damage (visitors took 0 of 186 before 4.2).
-- **It does not write to the Responder Availability Record.** Supply reads that for maintenance windows.
+- **It does not write to the Responder Availability Record.** Supply reads that for maintenance windows. Wen Li confirms the routing change leaves its inputs alone (A18).
 - **It does not start mutual aid or shared cover.** Both are on the Q4 exploration list.
 - **It does not touch identity.** Everything comes from the ping log and capability tags (Security Policy 4.1).
 - **It does not claim to know why a ping was missed.** Missed means no answer inside the wait.
@@ -57,7 +61,9 @@ Only these change, and nothing else in routing:
 2. Score = share of the responder's last 30 **home-area** pings that were taken. A miss counts as not taken. Fewer than 5 home pings: use the neutral 0.5. The four land at 0.67 to 0.80 on the data we have.
 3. The score is rebuilt from the ping log on every start, so it survives a deploy. Weights are unchanged.
 
-**Roster alarm:** alert Marcus Oyelaran when the 7-day missed-ping rate is above 5%, or when 25% of the roster is Quiet at once. That would have fired on 12 Aug, 5 to 6 days before the weekly report or the support escalation. If a deploy makes 30 responders miss pings, this fires first and Quiet is the wrong tool.
+**Roster alarm:** alert Marcus Oyelaran when the 7-day missed-ping rate is above 5%, or when 25% of the roster is Quiet at once. That would have fired on 12 Aug, 5 to 6 days before the weekly report or the support escalation. If a deploy makes 30 responders miss pings, this fires first and Quiet is the wrong tool. Until phase 2 exists there is no Quiet state, so in phase 1 the alarm uses the missed-ping rate only; the 25% trigger arrives with Quiet.
+
+**Proposed response (A17):** Marcus looks within one working day and tells Helen what he found. Routing tickets from support are tagged "routing" and answered by Nadia Hoffmann's team within two working days, so a pattern like the 45 unanswered tickets since 12 Aug is visible.
 
 ### When a responder is Quiet (phase 2)
 
@@ -129,35 +135,56 @@ Things I did not learn from the data, code or interviews. Each is my working ass
 | A12 | Responders will accept seeing their own ping outcomes. No responder has been interviewed. | Sofia Marino, with 2 or 3 responders | Cut phase 3. |
 | A13 | A handler can act on a Quiet responder within 24 hours. | Helen Achebe | Change the follow-up window. |
 | A14 | A 25% Quiet share is a sensible alarm threshold (4 of 16 hit it at the peak). | Marcus Oyelaran | Re-set after two weeks of live data. |
+| A15 | A busy responder can also be Quiet, and showing both facts plainly is clear to a handler (The Gale was one of the six episodes). | Sofia Marino, with Kip | Change the card wording. The rule does not change. |
+| A16 | Restoring 90s costs little. I do not know what the 60s wait was meant to achieve in 4.2. | Helen Achebe, Marcus Oyelaran | If 60s served a goal we still need, re-weigh against the lockouts; the time-to-accept guardrail catches it after release. |
+| A17 | Marcus's team can look at an alarm within one working day, and Nadia's team can tag and answer routing tickets within two. | Marcus Oyelaran, Nadia Hoffmann | Change the response times. The alarm without a response does not close the gap. |
+| A18 | The routing change leaves everything the Responder Availability Record reads unchanged, so Supply's maintenance windows do not move. | Wen Li, with the Supply team | Hold phase 1 until Supply is told. Any change to how Dispatch computes availability reaches Supply silently. |
+| A19 | The 90s wait plus the rebuilt score is enough to reach 6.5% unanswered. Chains never exceed 4 pings and night callouts roughly halved after 4.2; neither is explained. | Wen Li (chain limit), Ravi Menon (night callouts) | A second cause is in play. Re-plan after week 2, and do not claim the fix is complete. |
+| A20 | The four can be repaired before the release slot, by a one-time rebuild from the ping log. I do not know if that is possible or safe. | Wen Li, Marcus Oyelaran | They stay locked out until release. Report the number of locked-out responders at each week. |
+
+## Conditions before ship (phase 1)
+
+Helen's yes on phase 1 is conditional on all three. If any fails, the brief comes back to her.
+
+1. **Replay agrees.** Wen Li's replay of the rebuilt score (A1 to A3) puts the four at 0.67 to 0.80 or explains the difference, and confirms home area is known to Dispatch. Also confirms the Supply point (A18).
+2. **The problem is still live.** Ravi Menon's data after 6 Sep shows the four still locked out, or shows what changed (A7). If they recovered by themselves, the mechanism still stands but the urgency and the release slot are re-argued.
+3. **There is a slot.** Marcus Oyelaran confirms the release the fix goes in, and whether a one-time repair of the four can happen sooner (A6, A20). Without this, the four wait for the train and we report the locked-out count each week.
+
+**Week-2 review (owner: Kristen Mayer, decision with Helen):** check the success measures. If unanswered callouts are not heading to 6.5% with locked-out at 0, A19 is in play and phase 2 is not started until we know why.
 
 ## Acceptance criteria
 
-*Routing*
+Criteria 1 to 3 are phase 1. 4 to 11 are phase 2. 12 and 13 are phase 3 and not approved. 14 applies to every phase.
+
+*Routing (phase 1)*
 1. Ping wait is 90 seconds for every responder.
 2. After deploy each score equals taken divided by the last 30 home-area pings from the log, and is the same after a restart. In Wen's replay the four land between 0.67 and 0.80.
-3. The roster alarm fires when the 7-day missed-ping rate is above 5%, or when 25% of the roster is Quiet.
+3. The roster alarm fires when the 7-day missed-ping rate is above 5%. From phase 2, it also fires when 25% of the roster is Quiet.
 
-*Quiet*
+*Quiet (phase 2)*
 4. At least 5 pings with 3 of the last 5 missed: Quiet after the next ping resolves, and at the latest after the daily sweep. 2 of 5: not Quiet.
 5. Quiet with 4 of the last 5 taken: cleared automatically. Nothing else clears it, including Kip.
 6. Replaying the rule over 29 Jun to 6 Sep produces exactly six episodes: Farlight, Meteor Mite, The Undertow, Vesper, Stormwrack, The Gale. This is the regression test.
 7. Routing priority for any responder is identical with Quiet on and off.
 8. Quiet, the check-in and every reply write nothing to the Responder Availability Record.
 
-*Check-in and test ping*
+*Check-in (phase 2)*
 9. One click sends one push, logged with time and delivery state. No second check-in within 24 hours. It creates no ping and no score change.
 10. Each of the three replies is logged and shown on Kip's card.
-11. At most 3 test pings a day, none recorded in the ping log. "Delivered" appears only with a push receipt.
 
-*Responder numbers*
-12. For all 16 responders the counts in the app equal the ping-log counts for the same 30 days, difference zero. The app never shows score or rank.
+*Weekly report (phase 2)*
+11. A responder Quiet for 14 days appears as a line in the weekly report to Helen, and is not cleared by time. Ravi Menon's weekly "pings down 50% against their own norm" line is included.
 
-*Success measure*
-13. Callouts nobody took, 4-week rolling, at or below 6.5% (11.2% now). At week 2 half the window is still pre-fix, so also report the weeks since release alone. Locked-out responders 4 to 0. Missed-ping rate at or below 5%. Median time-to-accept up by no more than 15 seconds. Self-cleared Quiet alerts at most one a fortnight.
+*Test ping and responder numbers (phase 3, not approved)*
+12. At most 3 test pings a day, none recorded in the ping log. "Delivered" appears only with a push receipt.
+13. For all 16 responders the counts in the app equal the ping-log counts for the same 30 days, difference zero. The app never shows score or rank.
+
+*Success measure (every phase)*
+14. Callouts nobody took, 4-week rolling, at or below 6.5% (11.2% now). At week 2 half the window is still pre-fix, so also report the weeks since release alone. Locked-out responders 4 to 0. Missed-ping rate at or below 5%. Median time-to-accept up by no more than 15 seconds. Self-cleared Quiet alerts at most one a fortnight.
 
 ## Have we actually solved the problem?
 
-**We believe we have solved** the lockout mechanism, the scoring issue, recovery after a restart, early detection of the one pattern we have seen (misses in a row, then pings stop), and a handler-visible signal if it returns.
+**We believe we have solved** the lockout mechanism, the scoring issue, recovery after a restart, and early detection of the one pattern we have seen (misses in a row, then pings stop) through the roster alarm. A handler-visible signal (phase 2) is proposed, not yet approved.
 
 **We have not proven**
 - That responders want the responder-facing screens. No responder has been interviewed.
@@ -165,6 +192,8 @@ Things I did not learn from the data, code or interviews. Each is my working ass
 - That delivery failures are a meaningful cause of missed pings. The evidence leans the other way: misses spiked 13 to 14 Aug before volume collapsed, and only 2 of the 4 quiet-phone tickets were collapsed responders.
 - That a handler's outreach changes a responder's behaviour. Kip texting Meteor Mite is the only example, and it did not help.
 - That Quiet catches a future failure mode and not just the four we know.
+- That the 90s wait and the rebuilt score alone bring unanswered callouts to 6.5%. The chain limit of 4 pings and the halving of night callouts are unexplained (A19).
+- That restoring 90s costs nothing we care about. We do not know what the 60s wait was for (A16).
 
 | Question | Answer |
 |---|---|
@@ -197,16 +226,22 @@ Things I did not learn from the data, code or interviews. Each is my working ass
 
 | Who | What |
 |---|---|
-| Wen Li | A1 to A3. Replay of callouts 41006, 41017, 41039, 41042. Travel minutes and the location used for callouts 40981, 40983, 40987, 40990, 40992, 40998, 41006, 41023, 41043, 41050, 41054. Why chains never exceed 4 pings. Whether "not available" can write to the Responder Availability Record without moving Supply's maintenance windows. |
-| Marcus Oyelaran | A4 to A6, A14. Push receipts. A release slot. |
-| Ravi Menon | A7, A8. Data after 6 Sep. Why night callouts roughly halved after 4.2. Weekly "pings down 50%" line. |
-| Sofia Marino | A10 to A12. Card placement, responder screens, what triggers the console chime, a check with handlers and two or three responders. |
-| Nadia Hoffmann | A9. The 45 unanswered routing tickets since 12 Aug, including #3043 from Mr. Ambrose (13 Aug). |
+| Wen Li | A1 to A3, A18, A19 (chain limit), A20. Replay of callouts 41006, 41017, 41039, 41042. Travel minutes and the location used for callouts 40981, 40983, 40987, 40990, 40992, 40998, 41006, 41023, 41043, 41050, 41054. Why chains never exceed 4 pings. Whether "not available" can write to the Responder Availability Record without moving Supply's maintenance windows. |
+| Marcus Oyelaran | A4 to A6, A14, A16, A17, A20. Push receipts. A release slot. What the 60s wait was for, with Helen. |
+| Ravi Menon | A7, A8, A19 (night callouts). Data after 6 Sep. Why night callouts roughly halved after 4.2. Weekly "pings down 50%" line. |
+| Sofia Marino | A10 to A12, A15. Card placement, responder screens, what triggers the console chime, a check with handlers and two or three responders. |
+| Nadia Hoffmann | A9, A17. The 45 unanswered routing tickets since 12 Aug, including #3043 from Mr. Ambrose (13 Aug). |
 
 ## Decisions for Helen
 
-1. **The goal.** Prevent responders silently falling out of rotation first, with the responder screens held back. Agree?
-2. **The action.** If Quiet appears on Kip's card tomorrow, is "get in touch within 24 hours" what we expect from him (A13)?
-3. **Sequencing.** Does the 90s wait plus the score rebuild go out alongside the handler badge, or ahead of it? I recommend ahead, with the roster alarm.
-4. **The threshold.** 3 of 5, or 3 of 7 if you want to catch dips like Nightwell's?
-5. **Responders seeing their own ping outcomes.** Comfortable with that, once we get to phase 3?
+**Needed now**
+
+1. **Phase 1.** Approve the 90s wait, the rebuilt score and the roster alarm, subject to the three conditions before ship? This is the only approval asked for today.
+2. **The 60s wait.** What was it meant to achieve, and are you comfortable undoing it (A16)?
+3. **Release capacity.** Phase 1 takes a slot. Availability Confidence missed 4.2 and 4.3 has requisition approval chains. Which gives way if the slot is tight? This belongs with the Q3 commitments conversation we still owe each other.
+
+**Later, with phase 1 results (week 2)**
+
+4. **Phase 2.** Build the Quiet badge and check-in? Do you expect handlers to get in touch within 24 hours when Quiet appears (A13)? I recommend deciding only after Kip and one other handler have been asked (A11).
+5. **The threshold.** 3 of 5, or 3 of 7 if you want to catch dips like Nightwell's?
+6. **Phase 3.** Comfortable with responders seeing their own ping outcomes? Not before interviews.
