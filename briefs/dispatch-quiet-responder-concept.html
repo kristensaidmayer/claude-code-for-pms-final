@@ -1,0 +1,442 @@
+<title>Quiet Responder Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: one-pager on top (goal, build order, what each person notices, the rule, what we know/assume, decisions), then a four-step click-through with the handler console and the responder phone side by side. Same type and palette as the 4.2 briefs. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5b6577;
+  --line: #dde1e8;
+  --accent: #2b5fd9;
+  --tint: #eef2fb;
+  --miss: #c2410c;
+  --miss-tint: #fdf0e8;
+  --good: #15803d;
+  --good-tint: #e9f6ee;
+  --device: #1b2230;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+    --accent: #7ea4ff; --tint: #1e2840; --miss: #fb923c; --miss-tint: #33231a;
+    --good: #4ade80; --good-tint: #17281e; --device: #0b0e13; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+  --accent: #7ea4ff; --tint: #1e2840; --miss: #fb923c; --miss-tint: #33231a;
+  --good: #4ade80; --good-tint: #17281e; --device: #0b0e13; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 940px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: flex; flex-direction: column; gap: 36px; }
+header, section { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.eyebrow { font-family: var(--font-data); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; max-width: 70ch; }
+.lede { font-size: 1.1rem; }
+.muted { color: var(--muted); font-size: 14px; }
+a { color: var(--accent); }
+code { font-family: var(--font-data); font-size: 13px; }
+.two, .three { display: grid; gap: 14px; }
+.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.panel .who { font-family: var(--font-data); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.panel ul, .list { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+.then { color: var(--muted); font-size: 14px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fact b { font-family: var(--font-data); font-weight: 500; font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.fact span { font-size: 13px; color: var(--muted); }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+tr.pick td { background: var(--tint); }
+td.n { font-family: var(--font-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ph { font-family: var(--font-data); font-size: 12px; font-weight: 500; border-radius: 6px; padding: 2px 8px; background: var(--tint); color: var(--accent); white-space: nowrap; }
+.ph.later { background: transparent; color: var(--muted); border: 1px dashed var(--line); }
+.ask { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+.ask h2 { color: var(--accent); }
+.jump { align-self: flex-start; font-weight: 600; text-decoration: none; border: 1px solid var(--accent); border-radius: 8px; padding: 8px 14px; }
+.jump:hover { background: var(--tint); }
+
+/* Click-through */
+.stepper { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.step { font: inherit; font-size: 14px; background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+.step[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .step[aria-current="true"], :root:not([data-theme="light"]) .btn { color: #0b1020; } }
+:root[data-theme="dark"] .step[aria-current="true"], :root[data-theme="dark"] .btn { color: #0b1020; }
+.step:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.caption { background: var(--tint); border-radius: 10px; padding: 12px 16px; font-size: 15px; max-width: none; }
+.stage { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.console, .phone { background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.console { border-radius: 10px; overflow: hidden; }
+.bar { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 10px 14px; background: var(--device); color: #e6e9ef; font-size: 13px; }
+.bar b { font-weight: 600; }
+.qcount { font-family: var(--font-data); }
+.cards { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
+.card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.card.flag { border-color: var(--miss); }
+.card.ok { border-color: var(--good); }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.name { font-weight: 600; }
+.pill { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 10px; background: var(--tint); color: var(--fg); border: 1px solid var(--line); white-space: nowrap; }
+.pill.quiet { background: var(--miss-tint); color: var(--miss); border-color: var(--miss); }
+.pill.good { background: var(--good-tint); color: var(--good); border-color: var(--good); }
+.stat { font-family: var(--font-data); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dot { font-family: var(--font-data); font-size: 12px; border-radius: 5px; padding: 2px 8px; border: 1px solid var(--line); }
+.dot.M { background: var(--miss-tint); color: var(--miss); border-color: var(--miss); }
+.dot.D { color: var(--muted); }
+.dot.T { background: var(--good-tint); color: var(--good); border-color: var(--good); }
+.why { background: var(--miss-tint); border-radius: 8px; padding: 10px 12px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+.why.okbox { background: var(--good-tint); }
+.today-note { font-size: 13px; color: var(--muted); font-style: italic; }
+.btn { font: inherit; font-size: 14px; font-weight: 600; background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; cursor: pointer; align-self: flex-start; text-align: left; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btns { display: flex; flex-direction: column; gap: 8px; }
+.btns .btn { align-self: stretch; }
+.phone { border-radius: 26px; border-width: 6px; border-color: var(--device); max-width: 320px; width: 100%; justify-self: center; display: flex; flex-direction: column; min-height: 440px; }
+.phone .top { text-align: center; font-size: 12px; color: var(--muted); padding: 10px 0 4px; font-family: var(--font-data); }
+.screen { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.screen h3 { font-size: 1.1rem; }
+.empty { margin: auto 0; text-align: center; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+.big { font-family: var(--font-data); font-size: 2.2rem; font-variant-numeric: tabular-nums; text-align: center; }
+.mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
+.mini div { border: 1px solid var(--line); border-radius: 8px; padding: 6px 2px; font-size: 12px; color: var(--muted); }
+.mini b { display: block; font-family: var(--font-data); font-size: 1.2rem; color: var(--fg); font-weight: 500; }
+.note { font-size: 12px; color: var(--muted); }
+.tag { font-family: var(--font-data); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 720px) {
+  .two, .three, .stage { grid-template-columns: 1fr; }
+  h1 { font-size: 1.75rem; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Rook Dispatch · Concept for Helen · Ping data through 6 Sep 2026</div>
+    <h1>Nobody should go quiet without anyone knowing</h1>
+    <p class="lede">The 90-second wait and a rebuilt score fix the four lockouts. They don't fix why it went unseen for five weeks: a responder's score sinks, their phone goes quiet, and nobody is told. This is what we would build, in the order we would build it, with the assumptions I made where I didn't know.</p>
+    <a class="jump" href="#clickthrough">Jump to the click-through</a>
+  </header>
+
+  <section>
+    <h2>What we build, and in what order</h2>
+    <p>The goal is to stop responders silently falling out of the rotation. Understanding why they did comes second, and waits.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Phase</th><th>What</th><th>Solves</th><th>Depends on</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ph">1</span></td><td><b>90s wait, rebuilt score, roster alarm.</b> Score = share of the last 30 home-area pings taken, rebuilt from the ping log on every start.</td><td>The four lockouts, bad scoring, recovery after a restart</td><td>Wen Li's replay</td></tr>
+          <tr><td><span class="ph">2</span></td><td><b>Quiet badge and check-in on Kip's card.</b> Informational. Changes nothing in routing.</td><td>Nobody saw it for five weeks</td><td>Phase 1, Sofia Marino's card design</td></tr>
+          <tr><td><span class="ph later">3</span></td><td><b>Responder screens:</b> recent pings, check-in replies, test ping, "back in rotation".</td><td>Helping a responder understand why</td><td>Push receipts, and talking to responders first</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What each person would notice</h2>
+    <div class="two">
+      <div class="panel">
+        <div class="who">Kip, handler · phase 2</div>
+        <p><b>Each card says how busy that responder is against their usual week, and when someone is slipping, says so in plain words.</b></p>
+        <ul>
+          <li>"1 ping in 7 days, usually 11." Last 5 pings shown. Badge: <b>Quiet</b>, because 3 of the last 5 were missed.</li>
+          <li>The busy card says so too: "19 pings a week, usually 13."</li>
+          <li>"Send check-in": the text Kip sends today, logged. He acts within 24 hours. Nothing in routing changes.</li>
+        </ul>
+        <p class="then">Today: two cards that look like two products, and a handler texting a responder privately.</p>
+      </div>
+      <div class="panel">
+        <div class="who">Meteor Mite, responder · phase 1, then 3</div>
+        <p><b>Phase 1 puts them back in the rotation. Phase 3 tells them what happened.</b></p>
+        <ul>
+          <li>Phase 1: the wait is 90 seconds again, and their score is rebuilt from their own home-area history.</li>
+          <li>Phase 3: recent pings (taken, turned down, missed), three ways to reply to a check-in, a test ping, and a "Back in rotation" notice.</li>
+        </ul>
+        <p class="then">Today: three weeks of silence, no explanation, and a handler's guess.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why this, and not just a setting</h2>
+    <div class="three">
+      <div class="fact"><b>11 → 4</b><span>Meteor Mite pings a week, before 4.2 vs since (70 pings in about 6 weeks, then 14 in about 3.5; 8 of the 14 missed)</span></div>
+      <div class="fact"><b>13 → 19</b><span>The Gale pings a week over the same split: the other card in Kip's view</span></div>
+      <div class="fact"><b>5.1% → 11.2%</b><span>Callouts nobody took, about 85% of the rise from misses. Meteor Mite filed no ticket</span></div>
+    </div>
+    <p>Kip put it plainly: "Mite thinks Mite's been forgotten." Nobody on the customer side could see it, and nothing on screen helped. Wen's 2019 question was whether the score should ease back on its own. The answer here is that it should not stay invisible either way: when it moves, someone is told, and there is a way back.</p>
+  </section>
+
+  <section>
+    <h2>How Quiet works</h2>
+    <div class="tbl">
+      <table>
+        <tbody>
+          <tr><th>Raises</th><td>3 or more of the responder's last 5 pings <b>missed</b>, any area, with at least 5 pings of history. Computed from the ping log, not from the score.</td></tr>
+          <tr><th>Clears</th><td>4 or more of their last 5 pings <b>taken</b>. Automatic. Kip can add a "checked in" note but cannot dismiss it.</td></tr>
+          <tr><th>Why harder to clear</th><td>Stops it flapping. Clearing as soon as fewer than 3 are missed gave up to 3 episodes for one responder. Clearing at 4 takes of 5 gave none more than 1.</td></tr>
+          <tr><th>Stuck Quiet</th><td>After 14 days it becomes a line in the weekly report to Helen. Never cleared by time alone.</td></tr>
+          <tr><th>Roster alarm</th><td>7-day missed-ping rate above 5%, or 25% of the roster Quiet at once, alerts Marcus Oyelaran. This fires first if a deploy breaks everyone, and would have fired on 12 Aug.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Rule tested (16 responders, 29 Jun to 6 Sep)</th><th>The four caught, days before lockout</th><th>Episodes</th><th>Others flagged</th></tr></thead>
+        <tbody>
+          <tr><td>2 of last 5 missed</td><td class="n">4 of 4 · 0, 5 to 6, 2, 8</td><td class="n">24</td><td>11 of 12 others</td></tr>
+          <tr class="pick"><td><b>3 of last 5 missed (chosen)</b></td><td class="n">4 of 4 · 0, 5, 2, 3</td><td class="n">6</td><td>Stormwrack, The Gale</td></tr>
+          <tr><td>3 of last 7 missed</td><td class="n">4 of 4 · 0, 5, 2, 6</td><td class="n">8</td><td>Nightwell, Stormwrack, The Gale</td></tr>
+          <tr><td>4 of last 7 missed</td><td class="n">4 of 4, two a day late</td><td class="n">4</td><td>None</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Nightwell's dip was mostly turn-downs with takes in between, and it kept being pinged, so 3 of 5 does not flag it. If Helen would rather catch that kind of dip, 3 of 7 is the swap. A bad alert means a badge that clears within 7 days with no action from Kip: Stormwrack and The Gale, two in 10 weeks. Stormwrack missed 3 in a row, then took its next 3, so the alert was right and the clear was slow.</p>
+  </section>
+
+  <section>
+    <h2>What we know, what I assumed, what we don't know</h2>
+    <div class="two">
+      <div class="panel">
+        <div class="who">Solid</div>
+        <ul>
+          <li>A miss costs the same as a decline and never decays. The four were locked out over about a week by new misses.</li>
+          <li>The rule flags all four, 0 to 5 days ahead, in a backtest.</li>
+          <li>Visitors took 0 of 186 out-of-area pings before 4.2.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="who">Not proven</div>
+        <ul>
+          <li>That responders want the responder screens. No responder has been interviewed.</li>
+          <li>That check-in replies, or Kip's outreach, change anything.</li>
+          <li>That delivery failures are a meaningful cause. Evidence leans towards behaviour and timing.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>My assumption</th><th>Confirms</th><th>If wrong</th></tr></thead>
+        <tbody>
+          <tr><td>Dispatch knows each responder's home area.</td><td>Wen Li</td><td>The score can't be home-area only, and the fix is weaker.</td></tr>
+          <tr><td>The push channel can carry a check-in, and push receipts can be produced.</td><td>Marcus Oyelaran</td><td>Check-in is a note on Kip's card only. The test ping stays "sent, delivery not confirmed".</td></tr>
+          <tr><td>The four are still locked out after 6 Sep. I have no later data.</td><td>Ravi Menon</td><td>Urgency changes. The mechanism doesn't.</td></tr>
+          <tr><td>Support can take "my phone isn't getting pings" cases.</td><td>Nadia Hoffmann</td><td>Drop that reply, or route it to Marcus's team.</td></tr>
+          <tr><td>Handlers want the badge. None asked for it.</td><td>Sofia Marino, with Kip and one other handler</td><td>Cut phase 2 and keep the roster alarm.</td></tr>
+          <tr><td>Responders will accept seeing their own ping outcomes.</td><td>Sofia Marino, with 2 or 3 responders</td><td>Cut phase 3.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">The brief has all 14 assumptions, with acceptance criteria and owners.</p>
+  </section>
+
+  <section>
+    <h2>What it deliberately does not do</h2>
+    <ul class="list">
+      <li>Revert 4.2, or let anyone change a rank by hand. Nobody sees the score.</li>
+      <li>Make misses free, which rewards never answering. A miss counts, but only against home-area pings, and it can be recovered.</li>
+      <li>Write to the Responder Availability Record, which Supply reads. Quiet is display only.</li>
+      <li>Add an out-of-area score yet (next release, after Wen's replay), or start mutual aid (Q4).</li>
+      <li>Touch identity. Everything comes from the ping log and capability tags.</li>
+    </ul>
+  </section>
+
+  <div class="ask">
+    <h2>Decisions for you, Helen</h2>
+    <ol class="list">
+      <li><b>The goal.</b> Prevent responders silently falling out first, with the responder screens held back. Agree?</li>
+      <li><b>The action.</b> If Quiet appears on Kip's card tomorrow, is "get in touch within 24 hours" what we expect from him?</li>
+      <li><b>Sequencing.</b> Does the 90s wait plus the rebuilt score go out alongside the badge, or ahead of it? I recommend ahead, with the roster alarm.</li>
+      <li><b>The threshold.</b> 3 of 5, or 3 of 7 to catch dips like Nightwell's?</li>
+      <li><b>Responders seeing their own outcomes.</b> Comfortable with that when we get to phase 3?</li>
+    </ol>
+  </div>
+
+  <section id="clickthrough">
+    <h2>Click through it</h2>
+    <p class="muted">A concept, not built. The ping counts for Meteor Mite and The Gale are real. The screens, wording and example callout are mine. Use the steps or the buttons inside the screens.</p>
+    <div class="stepper" role="group" aria-label="Steps">
+      <button class="step" data-go="1">1 · Today</button>
+      <button class="step" data-go="2">2 · Kip sees Quiet</button>
+      <button class="step" data-go="3">3 · Check-in and reply</button>
+      <button class="step" data-go="4">4 · Back in rotation</button>
+    </div>
+    <p class="caption" id="caption" aria-live="polite"></p>
+
+    <div class="stage">
+      <div class="console" aria-label="Handler console">
+        <div class="bar"><b>Rook Dispatch · Coverage</b><span class="qcount" id="qcount">Handler: Kip · Sat 5 Sep, 11:02pm</span></div>
+        <div class="cards">
+          <div class="card" id="cardGale">
+            <div class="row"><span class="name">The Gale</span><span class="pill">Available</span></div>
+            <div class="stat" id="galeStat">Pinged this week: 19 · usual 13</div>
+            <div class="today-note" data-show="1">Nothing on the card says why this one is busy and the other is not.</div>
+          </div>
+          <div class="card" id="cardMite">
+            <div class="row"><span class="name">Meteor Mite</span><span class="pill" id="mitePill">Available</span></div>
+            <div class="stat" id="miteStat">No new callouts</div>
+            <div class="today-note" data-show="1">Nothing on the card says why. Kip's only option is to text them.</div>
+            <div id="dotsBox" hidden>
+              <div class="dots" id="dots" aria-label="Last 5 pings, newest first"></div>
+              <div class="note" id="dotsNote">Last 5 pings, newest first (real: 20 Aug to 5 Sep)</div>
+            </div>
+            <div class="why" id="whyBox" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone" aria-label="Responder phone, Meteor Mite">
+        <div class="top">Rook · Meteor Mite · phase 3</div>
+        <div class="screen" id="phoneScreen"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Built from rook-database pings (29 Jun to 6 Sep), the September handler interviews, the routing code and a backtest of the Quiet rule. Screens and wording are a concept for discussion. See <code>dispatch-4.2-for-helen.html</code> for the 4.2 health check.</footer>
+</div>
+
+<script>
+(function () {
+  var captions = {
+    1: "Today. Kip's screen on 5 Sep: two cards, one quiet and one busy, and nothing that explains the gap. Meteor Mite's phone is a blank screen.",
+    2: "Phase 2. Kip's card for Meteor Mite shows the badge, the rule behind it, the last five outcomes and a check-in button. It is a display, not a setting: Kip cannot change anyone's rank.",
+    3: "Phases 2 and 3. Kip sends the check-in. On the phone, Meteor Mite chooses one of three replies and Kip's card updates. None of the replies changes routing.",
+    4: "Phase 1 has shipped, so a ping arrives with the full 90 seconds. Taking one ping does not clear Quiet. It clears when 4 of the last 5 are taken. Use the button to speed it up."
+  };
+  var BASE = ["M", "M", "D", "M", "M"]; // newest first: 5 Sep, 29 Aug, 27 Aug, 22 Aug, 20 Aug
+  var LABEL = { M: "Missed", D: "Turned down", T: "Taken" };
+  var step = 1, reply = null, testSent = false, hist = BASE.slice(), remaining = 90, timer = null, pingOpen = true, cleared = false, lastTake = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function count(c) { return hist.filter(function (x) { return x === c; }).length; }
+  function btn(id, cls, text) { return '<button class="btn ' + cls + '" id="' + id + '">' + text + '</button>'; }
+
+  function renderDots() {
+    $("dots").innerHTML = hist.map(function (x) { return '<span class="dot ' + x + '">' + LABEL[x] + '</span>'; }).join("");
+  }
+
+  function renderConsole() {
+    var card = $("cardMite"), pill = $("mitePill"), stat = $("miteStat"), why = $("whyBox");
+    var quiet = step >= 2 && !cleared;
+    card.className = "card" + (quiet ? " flag" : (step === 4 && cleared ? " ok" : ""));
+    pill.className = "pill" + (quiet ? " quiet" : (step === 4 && cleared ? " good" : ""));
+    pill.textContent = quiet ? "Quiet" : (step === 4 && cleared ? "Back in rotation" : "Available");
+    stat.textContent = step === 1 ? "No new callouts" : (step === 4 ? "Pinged in the last 7 days: " + (1 + lastTake) + " · usual 11" : "Pinged in the last 7 days: 1 · usual 11");
+    $("galeStat").textContent = step === 1 ? "Pinged this week: 19 · usual 13" : "Busier than usual: 19 pings a week · usual 13";
+    $("dotsBox").hidden = step === 1;
+    $("qcount").textContent = step === 1 ? "Handler: Kip · Sat 5 Sep, 11:02pm" : "Handler: Kip · Quiet: " + (cleared ? 0 : 1);
+    renderDots();
+    $("dotsNote").textContent = step === 4 ? "Last 5 pings, newest first (example from here on)" : "Last 5 pings, newest first (real: 20 Aug to 5 Sep)";
+    var h = "";
+    if (step === 2) {
+      h = '<span><b>Quiet.</b> 3 of the last 5 pings were missed (here, 4). Missed means no answer inside the wait. It does not tell us whether the phone rang. Kip gets in touch within 24 hours.</span>' + btn("sendCheckin", "", "Send check-in to Meteor Mite");
+    } else if (step === 3) {
+      var rtxt = reply === "phone" ? "Replied: <b>my phone isn't getting pings.</b>" + (testSent ? " Test ping sent. Delivery not confirmed yet (no push receipts)." : " Waiting for the test ping.")
+        : reply === "away" ? "Replied: <b>not available right now.</b> Shown to Kip only. Not written to the availability record until Wen and the Supply team have signed it off."
+        : reply === "fine" ? "Replied: <b>I'm fine, keep pinging me.</b> Quiet stays until 4 of the last 5 pings are taken."
+        : "Check-in sent 11:04pm. No reply yet.";
+      h = '<span>' + rtxt + '</span>' + (reply ? btn("toStep4", "ghost", "Continue: the fix has shipped") : "");
+    } else if (step === 4) {
+      if (cleared) {
+        h = '<span><b>Back in rotation.</b> 4 of the last 5 pings taken, so Quiet cleared on its own. Kip did not have to do anything.</span>' + btn("replay", "ghost", "Start again");
+      } else if (pingOpen) {
+        h = '<span><b>Ping live for Meteor Mite.</b> ' + remaining + ' seconds left. If it is missed it moves to the next responder and Kip sees that too.</span>';
+      } else {
+        h = '<span><b>Meteor Mite took the callout</b> in ' + (90 - remaining) + ' seconds. Still Quiet: ' + count("T") + ' of the last 5 pings taken, 4 needed to clear.</span>' + btn("ff", "", "Fast-forward: three more pings taken");
+      }
+    }
+    why.hidden = h === "";
+    why.className = "why" + (step === 4 && (cleared || !pingOpen) ? " okbox" : "");
+    why.innerHTML = h;
+    var a;
+    if ((a = $("sendCheckin"))) a.addEventListener("click", function () { go(3); });
+    if ((a = $("toStep4"))) a.addEventListener("click", function () { go(4); });
+    if ((a = $("ff"))) a.addEventListener("click", function () { hist = ["T", "T", "T", "T", "M"]; cleared = true; lastTake = 4; render(); });
+    if ((a = $("replay"))) a.addEventListener("click", function () { go(4); });
+  }
+
+  function renderPhone() {
+    var s = $("phoneScreen"), h = "";
+    if (step <= 2) {
+      h = '<div class="empty"><h3>No callouts</h3><span>' + (step === 1 ? "Nothing since Saturday. Is something wrong? There is no way to tell from here." : "Same screen while Kip looks at the console. The responder screens are phase 3.") + '</span></div>';
+    } else if (step === 3) {
+      h = '<h3>Check-in from Kip</h3><p>You\'ve had fewer callouts lately. In your last 14 pings: 3 taken, 3 turned down, 8 missed. Missed means we did not hear back in time.</p>' +
+        '<div class="mini"><div><b>3</b>taken</div><div><b>3</b>turned down</div><div><b>8</b>missed</div></div>' +
+        '<div class="btns">' + btn("r1", reply === "phone" ? "" : "ghost", "My phone isn't getting pings") + btn("r2", reply === "away" ? "" : "ghost", "I'm not available right now") + btn("r3", reply === "fine" ? "" : "ghost", "I'm fine, keep pinging me") + '</div>';
+      if (reply === "phone") h += '<p class="note">' + (testSent ? "Test ping sent. Delivery not confirmed yet." : "We can send a test ping to check.") + '</p>' + (testSent ? "" : btn("testPing", "", "Send me a test ping"));
+      if (reply === "away") h += '<p class="note">Kip has been told. This does not change who gets pinged yet.</p>';
+      if (reply === "fine") h += '<p class="note">Thanks. Kip has been told.</p>';
+    } else if (step === 4) {
+      if (cleared) {
+        h = '<div class="empty"><h3>Back in rotation</h3><span>You took 4 of your last 5 pings. You are being offered callouts for your home area again.</span></div>';
+      } else if (pingOpen) {
+        h = '<h3>New callout · example</h3><p>Your home area. Answer within 90 seconds.</p><div class="big" id="clock">' + remaining + '</div>' + btn("takeIt", "", "Take it");
+      } else {
+        h = '<h3>Taken</h3><p>The callout is yours. Your handler has been told.</p><p class="note">You have taken ' + count("T") + ' of your last 5 pings. 4 of 5 puts you back in rotation.</p>';
+      }
+    }
+    s.innerHTML = h;
+    var a;
+    ["r1:phone", "r2:away", "r3:fine"].forEach(function (p) {
+      var kv = p.split(":");
+      if ((a = $(kv[0]))) a.addEventListener("click", function () { reply = kv[1]; testSent = false; render(); });
+    });
+    if ((a = $("testPing"))) a.addEventListener("click", function () { testSent = true; render(); });
+    if ((a = $("takeIt"))) a.addEventListener("click", function () { pingOpen = false; stopClock(); hist = ["T"].concat(BASE.slice(0, 4)); lastTake = 1; render(); });
+  }
+
+  function render() {
+    document.querySelectorAll("[data-show]").forEach(function (el) {
+      el.hidden = el.getAttribute("data-show").split(" ").indexOf(String(step)) === -1;
+    });
+    document.querySelectorAll(".step").forEach(function (b) {
+      b.setAttribute("aria-current", String(Number(b.getAttribute("data-go")) === step));
+    });
+    $("caption").textContent = captions[step];
+    renderConsole();
+    renderPhone();
+  }
+
+  function tick() {
+    if (!pingOpen) return;
+    if (remaining > 0) remaining -= 1;
+    var c = $("clock");
+    if (c) c.textContent = remaining;
+    var w = $("whyBox");
+    if (step === 4 && pingOpen && w && w.firstChild && !cleared) {
+      w.firstChild.innerHTML = '<b>Ping live for Meteor Mite.</b> ' + remaining + ' seconds left. If it is missed it moves to the next responder and Kip sees that too.';
+    }
+  }
+  function startClock() { stopClock(); timer = setInterval(tick, 1000); }
+  function stopClock() { if (timer) { clearInterval(timer); timer = null; } }
+
+  function go(n) {
+    step = n;
+    if (n === 4) { hist = BASE.slice(); remaining = 90; pingOpen = true; cleared = false; lastTake = 0; startClock(); }
+    else { stopClock(); if (n < 3) { reply = null; testSent = false; } hist = BASE.slice(); cleared = false; }
+    render();
+  }
+
+  document.querySelectorAll(".step").forEach(function (b) {
+    b.addEventListener("click", function () { go(Number(b.getAttribute("data-go"))); });
+  });
+  go(1);
+})();
+</script>
