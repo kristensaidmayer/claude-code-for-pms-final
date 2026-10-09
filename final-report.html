@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Quiet Four: Rook Dispatch 4.2 final report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{color-scheme:light;--ink:#111018;--paper:#fffbea;--paper2:#fff3c4;--purple:#2a1458;--purple2:#3d1f7a;--blue:#1f5cff;--blue2:#0b2fa8;--red:#e4202d;--yellow:#ffd60a;--green:#12a150;--teal:#0fb5a8;--mute:#4a4560;
+--display:"Bangers",Impact,"Arial Black",sans-serif;--cond:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--body:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background-color:var(--purple);background-image:radial-gradient(rgba(255,255,255,.09) 1.6px,transparent 1.8px),radial-gradient(rgba(255,214,10,.06) 1.6px,transparent 1.8px);background-size:14px 14px;background-position:0 0,7px 7px;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;min-height:100vh}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.mast{position:sticky;top:0;z-index:20;background:var(--blue);border-bottom:5px solid var(--ink);overflow:hidden}
+.mast::before{content:"";position:absolute;inset:-80%;background:repeating-conic-gradient(from 0deg at 20% 50%,rgba(255,255,255,.14) 0 3deg,transparent 3deg 9deg)}
+.mast-in{position:relative;max-width:1180px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:1.9rem;line-height:1;letter-spacing:.04em;color:var(--yellow);-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+.issue{background:var(--red);color:#fff;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:1px 10px;font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:14px;transform:rotate(-2deg)}
+.nav{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nb{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:15px;background:var(--paper);color:var(--ink);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:3px 12px}
+.nb:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.nb:disabled{opacity:.45;cursor:default}
+.count{font-family:var(--mono);font-size:13px;color:#fff;background:var(--ink);padding:2px 8px;border-radius:4px}
+.dots{display:flex;gap:6px;position:relative;max-width:1180px;margin:0 auto;padding:0 16px 8px}
+.dot{width:100%;height:9px;background:var(--paper);border:2px solid var(--ink);padding:0}
+.dot.on{background:var(--yellow)}
+.stage{max-width:1180px;margin:0 auto;padding:22px 16px 40px}
+.slide{margin-bottom:36px}
+.js .slide{display:none;margin-bottom:0}
+.js .slide.on{display:block;animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{0%{transform:translateY(6px)}100%{transform:none}}
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.04em;margin:0}
+h2{font-size:clamp(2rem,5vw,3.2rem);line-height:1;color:#fff;-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:4px 4px 0 var(--red)}
+.kick{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--yellow);font-size:15px;margin:0 0 4px;text-shadow:1px 1px 0 var(--ink)}
+.lede{color:#efe9ff;font-size:1.08rem;max-width:62ch;margin:10px 0 18px}
+.panel{position:relative;background:var(--paper);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);min-width:0}
+.panel::after{content:"";position:absolute;right:0;top:0;width:50%;height:36%;pointer-events:none;background-image:radial-gradient(rgba(17,16,24,.10) 1.6px,transparent 1.8px);background-size:9px 9px;-webkit-mask-image:linear-gradient(225deg,#000,transparent 70%);mask-image:linear-gradient(225deg,#000,transparent 70%)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}
+@media(max-width:860px){.grid3,.grid2{grid-template-columns:1fr}}
+.pad{padding:14px 16px 16px;position:relative;z-index:1}
+.bubble{position:relative;background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:18px;padding:8px 14px;font-family:var(--cond);font-weight:700;font-size:18px;line-height:1.2;display:inline-block}
+.bubble::before,.bubble::after{content:"";position:absolute;left:30px;border-style:solid;border-color:transparent}
+.bubble.dn::before{bottom:-17px;border-width:17px 12px 0 6px;border-top-color:var(--ink)}
+.bubble.dn::after{bottom:-11px;left:33px;border-width:13px 9px 0 4px;border-top-color:#fff}
+.burst{position:absolute;z-index:3;font-family:var(--display);letter-spacing:.05em;color:var(--ink);background:var(--yellow);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:2px 12px;transform:rotate(-6deg)}
+.ink-t{font-family:var(--display);letter-spacing:.04em;color:#fff;-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+/* cover */
+.cover{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;align-items:center}
+@media(max-width:860px){.cover{grid-template-columns:1fr}}
+.cover-art{background:var(--blue);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:18px;position:relative;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;justify-content:center;gap:4px}
+.cover-art::before{content:"";position:absolute;inset:-60%;background:repeating-conic-gradient(from 0deg at 50% 60%,rgba(255,255,255,.18) 0 3deg,transparent 3deg 9deg)}
+.cover-art>*{position:relative;z-index:1}
+.cover-art .big{width:46%;max-width:190px}
+.cover-art .sm{width:27%;max-width:120px}
+.title{font-size:clamp(3.2rem,10vw,6.6rem);line-height:.88;color:var(--yellow);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:6px 6px 0 var(--red)}
+.byline{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;font-size:16px;margin-top:14px;text-shadow:1px 1px 0 var(--ink)}
+.fine{font-size:12.5px;color:#cfc4ee;margin-top:10px;max-width:60ch}
+/* fix */
+.fx .band{padding:10px 14px;border-bottom:4px solid var(--ink);display:flex;align-items:baseline;gap:10px}
+.fx:nth-child(1) .band{background:var(--blue)}.fx:nth-child(2) .band{background:var(--red)}.fx:nth-child(3) .band{background:var(--teal)}
+.fx .big{font-family:var(--display);font-size:2.6rem;line-height:1;color:#fff;-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+.fx .lab{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;text-shadow:1px 1px 0 var(--ink)}
+.fx p{margin:0 0 8px}
+.small{font-size:13.5px;color:var(--mute)}
+.ask{margin-top:26px;background:var(--yellow);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:14px 18px;position:relative}
+.ask h3{font-family:var(--display);font-weight:400;font-size:1.7rem;letter-spacing:.05em;margin:0 0 6px}
+.ask ol{margin:6px 0 8px 1.2em;padding:0}
+.ask li{margin:2px 0}
+.tgt{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:14.5px;background:var(--paper);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:2px 10px}
+.chip b{font-family:var(--mono);font-size:13px}
+/* demo */
+.demo{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:26px;align-items:start}
+@media(max-width:900px){.demo{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media(max-width:620px){.cards{grid-template-columns:1fr}}
+.card .band{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-bottom:4px solid var(--ink);transition:background .4s}
+.card.mite .band{background:#5a5575}
+.card.mite.alert .band{background:var(--red)}
+.card.mite.ok .band{background:var(--green)}
+.card.gale .band{background:var(--blue)}
+.card .av{width:74px;height:74px;flex:none}
+.card .av svg{width:100%;height:100%;display:block;overflow:visible}
+.card .nm{font-family:var(--display);font-size:1.8rem;line-height:.95;letter-spacing:.04em;color:#fff;-webkit-text-stroke:1.2px var(--ink);paint-order:stroke fill;text-shadow:2px 2px 0 var(--ink)}
+.pill{display:inline-block;font-family:var(--display);letter-spacing:.06em;font-size:1.1rem;padding:1px 10px;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);color:#fff;transform:rotate(-2deg);margin-top:4px}
+.pill.quiet{background:var(--red);animation:flick 1.8s steps(1) infinite}
+.pill.avail{background:var(--blue)}
+.pill.ok{background:var(--green)}
+@keyframes flick{0%,100%{opacity:1}8%{opacity:.4}12%{opacity:1}58%{opacity:.55}62%{opacity:1}}
+.meter .lab{display:flex;justify-content:space-between;font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:14px}
+.meter .lab b{font-family:var(--mono);font-size:13px;letter-spacing:0}
+.track{height:20px;background:#fff;border:3px solid var(--ink);overflow:hidden;margin-top:3px}
+.fill{height:100%;background:repeating-linear-gradient(115deg,var(--red) 0 10px,#ff5c66 10px 20px);border-right:3px solid var(--ink);transition:width .7s cubic-bezier(.2,.9,.3,1.2)}
+.fill.good{background:repeating-linear-gradient(115deg,var(--blue) 0 10px,#4d84ff 10px 20px)}
+.fill.surge{background:repeating-linear-gradient(115deg,var(--yellow) 0 10px,#fff08a 10px 20px)}
+.last5{display:flex;gap:6px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.last5 span.t{font-family:var(--cond);font-weight:700;text-transform:uppercase;font-size:13px;letter-spacing:.06em;margin-right:2px}
+.o{width:30px;height:30px;border:3px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-size:1.15rem;color:#fff;box-shadow:2px 2px 0 var(--ink)}
+.o.M{background:var(--red)}.o.T{background:#f08a2d}.o.K{background:var(--green)}
+.status{margin-top:10px;font-family:var(--cond);font-weight:700;font-size:16px;min-height:44px}
+.side .stepn{font-family:var(--display);font-size:1.5rem;letter-spacing:.05em;margin:0 0 4px}
+.steps{display:flex;flex-direction:column;gap:8px}
+.st{text-align:left;font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:15px;background:var(--paper);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:6px 10px}
+.st.on{background:var(--yellow)}
+.demo-note{font-size:12.5px;color:#cfc4ee;margin-top:12px}
+.demo-note a{color:var(--yellow)}
+/* what happened */
+.bars{display:flex;flex-direction:column;gap:16px}
+.bar .lab{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:15px;margin-bottom:3px}
+.bar .row{display:flex;align-items:center;gap:8px;margin:3px 0}
+.bar .row .w{font-family:var(--cond);font-weight:700;font-size:13px;width:54px;text-transform:uppercase;letter-spacing:.05em}
+.bar .row .b{height:24px;border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;min-width:48px}
+.b.pre{background:var(--blue)}.b.post{background:var(--red)}
+.loop{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.lp{background:#fff;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:6px 10px;font-family:var(--cond);font-weight:700;font-size:16px;line-height:1.15}
+.lp small{display:block;font-weight:600;font-size:13px;color:var(--mute)}
+.lp.hot{background:var(--red);color:#fff}.lp.hot small{color:#ffe3e5}
+.ar{text-align:center;font-family:var(--display);font-size:1.3rem;line-height:1;color:var(--ink);padding:3px 0}
+.stuck{margin-top:8px;background:var(--ink);color:var(--yellow);font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 10px;text-align:center;font-size:14px}
+/* modules */
+.mod .band{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:4px solid var(--ink)}
+.grid3 .mod:nth-child(1) .band{background:var(--blue)}.grid3 .mod:nth-child(2) .band{background:var(--red)}.grid3 .mod:nth-child(3) .band{background:var(--teal)}
+.mnum{font-family:var(--display);font-size:2rem;line-height:1;color:var(--yellow);-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:2px 2px 0 var(--ink)}
+.mt{font-family:var(--display);font-size:1.45rem;letter-spacing:.06em;color:#fff;-webkit-text-stroke:1.2px var(--ink);paint-order:stroke fill;text-shadow:2px 2px 0 var(--ink)}
+.mbody{padding:12px 14px 14px;position:relative;z-index:1;display:flex;flex-direction:column;gap:10px}
+.found{margin:0;font-size:14.5px}
+.said{background:#fff;border:3px solid var(--ink);padding:8px 10px 8px;position:relative;margin-top:6px}
+.said .tag{position:absolute;top:-13px;left:8px;font-family:var(--display);letter-spacing:.06em;background:var(--yellow);border:3px solid var(--ink);padding:0 8px;font-size:.95rem;transform:rotate(-2deg)}
+.ptext{margin:6px 0 0;font-size:12.5px;line-height:1.38;color:#25212f;white-space:pre-wrap}
+.src{margin:0;font-family:var(--mono);font-size:11px;color:var(--mute)}
+/* skill */
+.chk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+@media(max-width:900px){.chk{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.chk{grid-template-columns:1fr}}
+.ck{padding:12px 12px 12px;text-align:center}
+.ck .pow{display:inline-block;font-family:var(--display);font-size:1.6rem;letter-spacing:.06em;color:#fff;-webkit-text-stroke:1.2px var(--ink);paint-order:stroke fill;text-shadow:2px 2px 0 var(--ink);background:var(--blue);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:0 12px;transform:rotate(-2deg)}
+.ck:nth-child(2) .pow{background:var(--red)}.ck:nth-child(3) .pow{background:var(--teal)}.ck:nth-child(4) .pow{background:var(--purple2)}
+.ck p{margin:8px 0 0;font-size:14.5px}
+.guards{margin-top:26px}
+.sched{margin-top:20px;background:var(--paper2)}
+/* open */
+.todo{margin:6px 0 0;padding:0 0 0 1.1em;font-size:14.5px}
+.todo li{margin:3px 0}
+.end{margin-top:26px;text-align:center}
+.tbc{display:inline-block;font-family:var(--display);letter-spacing:.08em;font-size:clamp(2rem,6vw,3.6rem);color:var(--yellow);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:5px 5px 0 var(--red);transform:rotate(-2deg)}
+.hint{max-width:1180px;margin:0 auto;padding:0 16px 24px;color:#cfc4ee;font-size:12.5px;text-align:center}
+@media print{.mast,.dots,.hint{display:none}.slide{display:block!important;page-break-after:always}body{background:#fff}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="mast" role="banner">
+  <div class="mast-in">
+    <span class="logo">ROOK DISPATCH</span><span class="issue">Final report · Release 4.2</span>
+    <div class="nav"><span class="count" id="count">1 / 8</span><button class="nb" id="prev" aria-label="Previous slide">&larr; Back</button><button class="nb" id="next" aria-label="Next slide">Next &rarr;</button></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+</header>
+
+<main class="stage" id="deck">
+
+<!-- 1 COVER -->
+<section class="slide" aria-label="Cover">
+  <div class="cover">
+    <div>
+      <p class="kick">Rook Dispatch · a PM&rsquo;s case file</p>
+      <h1 class="title">THE QUIET FOUR</h1>
+      <p class="lede" style="font-size:1.2rem">How release 4.2 silenced four heroes, what I found across six modules, and the fix that puts them back in the rotation.</p>
+      <p class="byline">Kristen Mayer · PM, Rook Dispatch · 9 Oct 2026 · For Helen Achebe</p>
+      <p class="fine">Rook Industries is a fictional teaching scenario from Product School&rsquo;s Claude Code for PMs course. Hero art is invented and uses cover identities only. Use the Next button or the arrow keys.</p>
+    </div>
+    <div class="cover-art" aria-hidden="false">
+      <span class="burst" style="top:14px;left:14px;font-size:1.5rem">4.2!</span>
+      <div class="sm"><svg viewBox="0 0 120 110" role="img" aria-label="A kitty hero in a purple cape with a lightning emblem"><path d="M16 48 Q2 86 8 106 Q60 112 112 106 Q118 86 104 48 Q60 72 16 48 Z" fill="#3d1f7a" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M38 76 Q60 68 82 76 L80 94 Q60 100 40 94 Z" fill="#e4202d" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M62 78 L54 88 L60 88 L57 96 L67 85 L61 85 Z" fill="#ffd60a" stroke="#111018" stroke-width="1.5" stroke-linejoin="round"/><path d="M34 38 L30 10 L52 28 Z" fill="#f0a04b" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M86 38 L90 10 L68 28 Z" fill="#f0a04b" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><ellipse cx="60" cy="52" rx="29" ry="25" fill="#f0a04b" stroke="#111018" stroke-width="3"/><ellipse cx="60" cy="63" rx="12" ry="8" fill="#fff3dd"/><path d="M32 44 L48 40 Q60 44 72 40 L88 44 Q90 54 76 54 Q66 50 60 52 Q54 50 44 54 Q30 54 32 44 Z" fill="#e4202d" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><ellipse cx="47" cy="47" rx="6" ry="4.5" fill="#b6ff7a" stroke="#111018" stroke-width="2"/><ellipse cx="73" cy="47" rx="6" ry="4.5" fill="#b6ff7a" stroke="#111018" stroke-width="2"/><ellipse cx="47" cy="47" rx="1.6" ry="4" fill="#111018"/><ellipse cx="73" cy="47" rx="1.6" ry="4" fill="#111018"/><path d="M56 58 L64 58 L60 63 Z" fill="#ff7a93" stroke="#111018" stroke-width="1.5" stroke-linejoin="round"/><path d="M60 63 Q55 69 50 65 M60 63 Q65 69 70 65" fill="none" stroke="#111018" stroke-width="2.2" stroke-linecap="round"/><path d="M44 62 L26 58 M44 66 L26 68 M76 62 L94 58 M76 66 L94 68" stroke="#111018" stroke-width="2" stroke-linecap="round"/></svg></div><div class="big"><svg viewBox="0 0 100 100" role="img" aria-label="Meteor Mite, a small hero in a red cowl with a comet emblem"><clipPath id="cm1"><circle cx="50" cy="50" r="46"/></clipPath><g clip-path="url(#cm1)"><rect width="100" height="100" fill="#ffd60a"/><g stroke="#ff9d00" stroke-width="3"><path d="M50 50 L0 20 M50 50 L0 50 M50 50 L0 80 M50 50 L100 20 M50 50 L100 50 M50 50 L100 80 M50 50 L25 0 M50 50 L75 0"/></g><path d="M8 100 Q50 58 92 100 Z" fill="#1f5cff" stroke="#111018" stroke-width="3"/><path d="M30 40 Q30 14 50 14 Q70 14 70 40 Q70 64 50 66 Q30 64 30 40 Z" fill="#e4202d" stroke="#111018" stroke-width="3"/><path d="M33 22 L28 8 L42 16 Z M67 22 L72 8 L58 16 Z" fill="#e4202d" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M35 38 L46 41 L44 47 L34 44 Z M65 38 L54 41 L56 47 L66 44 Z" fill="#fff" stroke="#111018" stroke-width="2.5" stroke-linejoin="round"/><path d="M44 56 Q50 59 56 56" fill="none" stroke="#111018" stroke-width="2.5" stroke-linecap="round"/></g><circle cx="50" cy="50" r="46" fill="none" stroke="#111018" stroke-width="4"/></svg></div><div class="sm"><svg viewBox="0 0 120 110" role="img" aria-label="A puppy hero in a teal cape"><path d="M16 48 Q2 86 8 106 Q60 112 112 106 Q118 86 104 48 Q60 72 16 48 Z" fill="#0fb5a8" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M38 76 Q60 68 82 76 L80 90 Q60 95 40 90 Z" fill="#1f5cff" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="82" r="4.5" fill="#ffd60a" stroke="#111018" stroke-width="2"/><ellipse cx="60" cy="50" rx="27" ry="25" fill="#d9a066" stroke="#111018" stroke-width="3"/><path d="M33 41 Q60 30 87 41 Q90 52 78 53 Q70 48 60 50 Q50 48 42 53 Q30 52 33 41 Z" fill="#1f5cff" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><ellipse cx="46" cy="45" rx="6" ry="5" fill="#fff" stroke="#111018" stroke-width="2"/><ellipse cx="74" cy="45" rx="6" ry="5" fill="#fff" stroke="#111018" stroke-width="2"/><circle cx="47" cy="46" r="2.5" fill="#111018"/><circle cx="73" cy="46" r="2.5" fill="#111018"/><ellipse cx="60" cy="63" rx="14" ry="10" fill="#f6dfba" stroke="#111018" stroke-width="2.5"/><ellipse cx="60" cy="58" rx="5.5" ry="4" fill="#111018"/><path d="M60 62 L60 65 M52 66 Q60 73 68 66" fill="none" stroke="#111018" stroke-width="2.5" stroke-linecap="round"/><path d="M57 69 Q60 78 64 69 Z" fill="#ff6b81" stroke="#111018" stroke-width="1.5" stroke-linejoin="round"/><path d="M38 34 Q16 34 18 64 Q30 70 38 52 Z" fill="#8a5a2b" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M82 34 Q104 34 102 64 Q90 70 82 52 Z" fill="#8a5a2b" stroke="#111018" stroke-width="3" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 THE FIX -->
+<section class="slide" aria-label="The fix">
+  <p class="kick">Start with the answer</p>
+  <h2>THE FIX: PUT THEM BACK IN THE ROTATION</h2>
+  <p class="lede">Three changes, shipped together in one release. This is the only thing I am asking you to approve today.</p>
+  <div class="grid3">
+    <article class="panel fx"><div class="band"><span class="big">90s</span><span class="lab">Ping wait</span></div><div class="pad"><p><b>Go back from 60 to 90 seconds.</b> At 60s, ping misses spiked and every missed ping was scored like a no.</p><p class="small">Vesper and Meteor Mite took 0 of 20 first-in-line pings at 60s, against 79% and 62% at 90s.</p></div></article>
+    <article class="panel fx"><div class="band"><span class="big">SCORE</span><span class="lab">Rebuilt from the log</span></div><div class="pad"><p><b>Score = share of a responder&rsquo;s last 30 home-area pings that were taken.</b> A miss counts as not taken, and it can be recovered.</p><p class="small">Rebuilt from the ping log every start, so it survives a deploy. On the data we have it puts the four at 0.67 to 0.80. Simulated, not yet live.</p></div></article>
+    <article class="panel fx"><div class="band"><span class="big">ALARM</span><span class="lab">Roster-level</span></div><div class="pad"><p><b>Alert Marcus when the 7-day missed-ping rate tops 5%.</b></p><p class="small">On this data it would have fired on 12 Aug, 5 to 6 days before the weekly report or the support escalation.</p></div></article>
+  </div>
+  <div class="ask">
+    <h3>THE ASK: APPROVE PHASE 1, ONCE THREE THINGS ARE TRUE</h3>
+    <ol><li>Wen Li&rsquo;s replay of the rebuilt score agrees (and Dispatch knows each responder&rsquo;s home area).</li><li>Ravi Menon&rsquo;s data after 6 Sep shows the four are still locked out.</li><li>Marcus Oyelaran confirms a release slot.</li></ol>
+    <div class="tgt"><span class="chip">Callouts nobody took <b>11.2% &rarr; &le; 6.5%</b></span><span class="chip">Locked-out responders <b>4 &rarr; 0</b></span><span class="chip">Missed pings <b>&le; 5%</b></span><span class="chip">Time-to-accept <b>+15s at most</b></span></div>
+  </div>
+</section>
+
+<!-- 3 PROTOTYPE -->
+<section class="slide" aria-label="Prototype in action">
+  <p class="kick">The prototype, in action</p>
+  <h2>WHAT KIP SEES WHEN A HERO GOES QUIET</h2>
+  <p class="lede">The fix puts them back. The prototype makes sure nobody has to guess in the meantime. Step through it.</p>
+  <div class="demo">
+    <div>
+      <div id="kipsay" style="margin-bottom:22px"><span class="bubble dn" id="kipbubble">Mite thinks Mite&rsquo;s been forgotten.</span></div>
+      <div class="cards">
+        <article class="panel card mite" id="cMite">
+          <div class="band"><div class="av"><svg viewBox="0 0 100 100" role="img" aria-label="Meteor Mite, a small hero in a red cowl with a comet emblem"><clipPath id="cm2"><circle cx="50" cy="50" r="46"/></clipPath><g clip-path="url(#cm2)"><rect width="100" height="100" fill="#ffd60a"/><g stroke="#ff9d00" stroke-width="3"><path d="M50 50 L0 20 M50 50 L0 50 M50 50 L0 80 M50 50 L100 20 M50 50 L100 50 M50 50 L100 80 M50 50 L25 0 M50 50 L75 0"/></g><path d="M8 100 Q50 58 92 100 Z" fill="#1f5cff" stroke="#111018" stroke-width="3"/><path d="M30 40 Q30 14 50 14 Q70 14 70 40 Q70 64 50 66 Q30 64 30 40 Z" fill="#e4202d" stroke="#111018" stroke-width="3"/><path d="M33 22 L28 8 L42 16 Z M67 22 L72 8 L58 16 Z" fill="#e4202d" stroke="#111018" stroke-width="3" stroke-linejoin="round"/><path d="M35 38 L46 41 L44 47 L34 44 Z M65 38 L54 41 L56 47 L66 44 Z" fill="#fff" stroke="#111018" stroke-width="2.5" stroke-linejoin="round"/><path d="M44 56 Q50 59 56 56" fill="none" stroke="#111018" stroke-width="2.5" stroke-linecap="round"/></g><circle cx="50" cy="50" r="46" fill="none" stroke="#111018" stroke-width="4"/></svg></div><div><div class="nm">Meteor Mite</div><span class="pill quiet" id="pMite">QUIET</span></div></div>
+          <div class="pad">
+            <div class="meter"><div class="lab"><span>Pings in 7 days</span><b id="mVal">1 · usual 11</b></div><div class="track"><div class="fill" id="mFill" style="width:9%"></div></div></div>
+            <div class="last5" id="l5"></div>
+            <div class="status" id="mStatus"></div>
+          </div>
+        </article>
+        <article class="panel card gale">
+          <div class="band"><div class="av"><svg viewBox="0 0 100 100" role="img" aria-label="The Gale, a hero in a blue cowl with wind swirls"><clipPath id="cg1"><circle cx="50" cy="50" r="46"/></clipPath><g clip-path="url(#cg1)"><rect width="100" height="100" fill="#bfe3ff"/><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M-4 30 Q20 22 36 30 T70 28 T104 26"/><path d="M-4 48 Q18 40 34 48 T68 46 T104 44"/><path d="M-4 66 Q20 58 36 66 T70 64 T104 62"/></g><path d="M4 100 Q50 60 96 100 Z" fill="#3d1f7a" stroke="#111018" stroke-width="3"/><path d="M30 40 Q30 12 50 12 Q70 12 70 40 Q70 64 50 66 Q30 64 30 40 Z" fill="#1f5cff" stroke="#111018" stroke-width="3"/><path d="M34 41 Q40 36 46 42 L44 47 Q38 47 34 41 Z M66 41 Q60 36 54 42 L56 47 Q62 47 66 41 Z" fill="#fff" stroke="#111018" stroke-width="2.5" stroke-linejoin="round"/><path d="M44 57 Q50 55 56 57" fill="none" stroke="#111018" stroke-width="2.5" stroke-linecap="round"/></g><circle cx="50" cy="50" r="46" fill="none" stroke="#111018" stroke-width="4"/></svg></div><div><div class="nm">The Gale</div><span class="pill avail">AVAILABLE</span></div></div>
+          <div class="pad">
+            <div class="meter"><div class="lab"><span>Pings in 7 days</span><b>19 · usual 13</b></div><div class="track"><div class="fill surge" style="width:100%"></div></div></div>
+            <div class="status small" style="font-weight:600">Same handler, same week. Kip can see the gap between his two cards is not a coincidence.</div>
+          </div>
+        </article>
+      </div>
+    </div>
+    <aside class="side">
+      <p class="stepn ink-t">STEP BY STEP</p>
+      <div class="steps" id="steps"></div>
+      <p class="demo-note">Illustrative, not live data. The score and rank are never shown to handlers, only counts and outcomes. This is phase 2: a decision for week 2, not part of today&rsquo;s ask. <a href="05-super-speed/prototype-comic.html">Open the full click-through prototype</a> (from the repo folder).</p>
+    </aside>
+  </div>
+</section>
+
+<!-- 4 WHAT HAPPENED -->
+<section class="slide" aria-label="What happened">
+  <p class="kick">What happened</p>
+  <h2>4.2 SHIPPED ON 12 AUG. FOUR HEROES WENT QUIET.</h2>
+  <p class="lede">4.2 shortened the ping wait from 90 to 60 seconds and weighted proximity up. A miss costs the same as a turn-down, and scores never recover unless you are pinged and take. So a missed ping at 60s pushed four responders into a loop they could not leave.</p>
+  <div class="grid2">
+    <article class="panel"><div class="pad">
+      <div class="bars">
+        <div class="bar"><div class="lab">Missed pings</div>
+          <div class="row"><span class="w">Before</span><span class="b pre" style="width:13%">2.3%</span></div>
+          <div class="row"><span class="w">After</span><span class="b post" style="width:100%">18.0%</span></div></div>
+        <div class="bar"><div class="lab">Callouts nobody took</div>
+          <div class="row"><span class="w">Before</span><span class="b pre" style="width:28%">5.1%</span></div>
+          <div class="row"><span class="w">After</span><span class="b post" style="width:62%">11.2%</span></div></div>
+        <div class="bar"><div class="lab">Pings lost by the four</div>
+          <div class="row"><span class="w">Four</span><span class="b post" style="width:75%">66&ndash;75%</span></div></div>
+      </div>
+      <p class="small" style="margin:12px 0 0">rook-database, 16 responders. Callouts: 4 weeks to 6 Sep against the 4 weeks before 4.2.</p>
+    </div></article>
+    <article class="panel"><div class="pad">
+      <div class="loop">
+        <div class="lp hot">Ping missed at 60s<small>nobody answers in time</small></div><div class="ar">&darr;</div>
+        <div class="lp">&minus;0.12 on the score<small>the same as turning it down</small></div><div class="ar">&darr;</div>
+        <div class="lp">Rank drops<small>and the score never eases back</small></div><div class="ar">&darr;</div>
+        <div class="lp">Fewer pings<small>the phone goes quiet</small></div><div class="ar">&darr;</div>
+        <div class="lp">Fewer chances to earn +0.08<small>break-even is a 60% take rate</small></div>
+      </div>
+      <div class="stuck">&circlearrowleft; The four took 18&ndash;29% after 4.2. Everyone who held took 64&ndash;71%.</div>
+    </div></article>
+  </div>
+</section>
+
+<!-- 5 HOW WE FOUND IT 1 -->
+<section class="slide" aria-label="How we found it, modules 1 to 3">
+  <p class="kick">How I found it · modules 1 to 3</p>
+  <h2>THE HUNT: WHAT FOOLED US</h2>
+  <p class="lede">One real finding per module, with the exact prompt I typed to get it.</p>
+  <div class="grid3"><article class="panel mod">
+<div class="band"><span class="mnum">1</span><span class="mt">ORIGIN STORY</span></div>
+<div class="mbody"><p class="found"><b>FOUND:</b> The 60-second wait looked like the trigger (about 75% sure). The proximity reweighting, seasonality and push delivery looked unlikely, but none was ruled out.</p>
+<div class="said"><span class="tag">I TYPED</span><p class="ptext">Act as a skeptical senior PM reviewing your analysis. Try to disprove your current theory that the 4.2 ranking changes are driving the Dispatch problems. What alternative explanations could produce the same symptoms? For each one, tell me what evidence would distinguish it from the ranking hypothesis. Then tell me the minimum data I need before I can confidently recommend a fix, revert, or no change.</p></div>
+<p class="src">01-origin-story/prompts.md</p></div></article><article class="panel mod">
+<div class="band"><span class="mnum">2</span><span class="mt">SUPER HEARING</span></div>
+<div class="mbody"><p class="found"><b>FOUND:</b> Interviews and tickets disagree. The quiet-phone tickets cover 4 responders but only 2 of them collapsed, and Vesper and Meteor Mite collapsed with zero tickets. 45 routing tickets since 12 Aug have no answer.</p>
+<div class="said"><span class="tag">I TYPED</span><p class="ptext">You've now read both folders (interviews and tickets). Where do they disagree? What's loud in the interviews but rare in the tickets, and what's all over the tickets that nobody brought up in the interviews?</p></div>
+<p class="src">02-super-hearing/prompts.md</p></div></article><article class="panel mod">
+<div class="band"><span class="mnum">3</span><span class="mt">REWIND</span></div>
+<div class="mbody"><p class="found"><b>FOUND:</b> The take rate only looked recovered (72.7% on 31 Aug) because the four barely get pinged. The fair-share rate is 58%. The health metric to report: callouts nobody took, 11.2% against 5.1% before 4.2.</p>
+<div class="said"><span class="tag">I TYPED</span><p class="ptext">Recalculate the post-4.2 take rate as if all 16 responders had kept receiving their pre-release share of pings. Does the apparent recovery by 31 Aug still hold, or is it mostly an artifact of the four collapsed responders being routed less work? Show your math.</p></div>
+<p class="src">03-rewind/prompts.md</p></div></article></div>
+</section>
+
+<!-- 6 HOW WE FOUND IT 2 -->
+<section class="slide" aria-label="How we found it, modules 4 to 6">
+  <p class="kick">How I found it · modules 4 to 6</p>
+  <h2>THE PROOF, THE PROTOTYPE, THE SKILL</h2>
+  <p class="lede">From reading the code, to building the fix, to making sure the next brief gets checked.</p>
+  <div class="grid3"><article class="panel mod">
+<div class="band"><span class="mnum">4</span><span class="mt">X-RAY VISION</span></div>
+<div class="mbody"><p class="found"><b>FOUND:</b> The code gives +0.08 for a take and −0.12 for a miss or a turn-down, with no recovery over time. So a 60% take rate is break-even, and every collapsed responder was below it (18–29%).</p>
+<div class="said"><span class="tag">I TYPED</span><p class="ptext">Find me the part of this code that takes points off somebody when they miss a ping or turn one down. Show it to me and explain it in plain English. Then find me every single thing in this code that puts points back on.</p></div>
+<p class="src">04-x-ray-vision/prompts.md</p></div></article><article class="panel mod">
+<div class="band"><span class="mnum">5</span><span class="mt">SUPER SPEED</span></div>
+<div class="mbody"><p class="found"><b>FOUND:</b> The brief and a click-through prototype: a Quiet badge on the handler’s card, a check-in, and a way back into the rotation. Assumptions are written down where we had no data.</p>
+<div class="said"><span class="tag">I TYPED</span><p class="ptext">update the brief and click through with everything we've learned and make assumptions for those we didnt</p></div>
+<p class="src">05-super-speed/prompts.md</p></div></article><article class="panel mod">
+<div class="band"><span class="mnum">6</span><span class="mt">SIDEKICKS</span></div>
+<div class="mbody"><p class="found"><b>FOUND:</b> Running my review-checklist skill on my own brief: ask Helen for phase 1 only, with three conditions before ship. Phase 3 was both listed and held back, and the brief now has assumptions A1–A20.</p>
+<div class="said"><span class="tag">I TYPED</span><p class="ptext">Looking at the review-checklist output, which findings are actually material to the decision, and which are mostly documentation hygiene? If you were reviewing this with a skeptical PM, what open questions would still prevent approval, what assumptions remain unproven, and have we truly solved for everything needed to make a confident go/no-go decision? Summarize the remaining risks, missing evidence, and any contradictions that could change the recommendation. Include a visual showing which issues are blockers, risks, and nice-to-fix items.</p></div>
+<p class="src">06-sidekicks/prompts.md</p></div></article></div>
+</section>
+
+<!-- 7 THE SKILL -->
+<section class="slide" aria-label="The skill">
+  <p class="kick">So it can&rsquo;t happen again</p>
+  <h2>THE SIDEKICK: REVIEW-CHECKLIST</h2>
+  <p class="lede">A skill I built so every brief gets the same four checks before it goes any further, with nothing to re-explain. Point it at any brief.</p>
+  <div class="chk">
+    <article class="panel ck"><span class="pow">OWNER</span><p>The brief names who owns it.</p></article>
+    <article class="panel ck"><span class="pow">PROOF</span><p>It says how we will know it worked.</p></article>
+    <article class="panel ck"><span class="pow">SCOPE</span><p>The scope at the end matches the scope at the start.</p></article>
+    <article class="panel ck"><span class="pow">WHY</span><p>It explains the problem before it proposes a fix.</p></article>
+  </div>
+  <div class="grid2 guards">
+    <article class="panel"><div class="pad"><b>It already paid off on my own brief.</b><p style="margin:6px 0 0">Two passes caught phase 3 being both listed and held back, a phase 1 row that still mentioned a feature from phase 2, and no named owner. The brief now asks Helen for phase 1 only.</p></div></article>
+    <article class="panel"><div class="pad"><b>Two guards, not one.</b><p style="margin:6px 0 0">The skill checks the plan before it ships. The roster alarm (7-day missed pings above 5%) watches the live system after it ships. After 4.2 nothing was watching missed pings, so the first alert was a support escalation days later.</p></div></article>
+  </div>
+  <article class="panel sched"><div class="pad"><b>It runs every Monday morning.</b> The skill reviews the briefs in my <code>briefs/</code> folder each week and reports what it finds. The habit is set; I am not waiting on a result.</div></article>
+</section>
+
+<!-- 8 OPEN / DECISIONS -->
+<section class="slide" aria-label="Open questions and decisions">
+  <p class="kick">Honest limits</p>
+  <h2>WHAT WE STILL DON&rsquo;T KNOW</h2>
+  <div class="grid2" style="margin-top:14px">
+    <article class="panel"><div class="pad"><b>Proven from the data and code</b><ul class="todo"><li>The lockouts happened, and the mechanism is in the code.</li><li>The 60s wait is the likely trigger (about 75% confidence).</li></ul><b style="display:block;margin-top:10px">Simulated, not yet live</b><ul class="todo"><li>The rebuilt score puts the four at 0.67 to 0.80.</li><li>The roster alarm would have fired on 12 Aug.</li></ul></div></article>
+    <article class="panel"><div class="pad"><b>Still open</b><ul class="todo"><li>Are the four still locked out after 6 Sep? (Ravi)</li><li>Does the score rebuild hold in the code, and why do chains never exceed 4 pings? (Wen)</li><li>What was the 60s wait meant to achieve? (Helen, Marcus)</li><li>Do handlers or responders actually want the badge or screens? Nobody has been asked.</li></ul></div></article>
+  </div>
+  <div class="ask">
+    <h3>DECISIONS FOR YOU, HELEN</h3>
+    <ol><li><b>Phase 1:</b> approve the 90s wait, the rebuilt score and the roster alarm, once the three conditions are met?</li><li><b>The 60s wait:</b> what was it for, and are you comfortable undoing it?</li><li><b>Release capacity:</b> if the slot is tight, does Availability Confidence or 4.3 requisition chains give way?</li></ol>
+    <p class="small" style="margin:6px 0 0;color:var(--ink)">Later, at week 2: the Quiet badge and check-in (phase 2). Not approved: responder screens (phase 3).</p>
+  </div>
+  <div class="end"><span class="tbc">TO BE CONTINUED&hellip;</span></div>
+</section>
+
+</main>
+<p class="hint">Arrow keys or the buttons to move. Press P to print the whole deck.</p>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var dots=document.getElementById('dots'), count=document.getElementById('count');
+  var prev=document.getElementById('prev'), next=document.getElementById('next');
+  var i=0;
+  document.documentElement.className='js';
+  slides.forEach(function(_,k){var d=document.createElement('button');d.className='dot';d.setAttribute('aria-label','Go to slide '+(k+1));d.onclick=function(){go(k)};dots.appendChild(d)});
+  dots.setAttribute('aria-hidden','false');
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('on',k===i)});
+    [].forEach.call(dots.children,function(d,k){d.classList.toggle('on',k===i)});
+    count.textContent=(i+1)+' / '+slides.length;
+    prev.disabled=i===0; next.disabled=i===slides.length-1;
+    try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+    window.scrollTo(0,0);
+  }
+  prev.onclick=function(){go(i-1)}; next.onclick=function(){go(i+1)};
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT')return;
+    if(e.key==='ArrowRight'||e.key==='PageDown')go(i+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp')go(i-1);
+    else if(e.key==='p'||e.key==='P')window.print();
+  });
+  var h=parseInt((location.hash||'').slice(1),10); go(isNaN(h)?0:h-1);
+
+  /* ---- prototype demo ---- */
+  var S=[
+    {n:'1 · Day one: Quiet',say:'Mite thinks Mite’s been forgotten.',cls:'alert',pill:'QUIET',pc:'quiet',val:'1 · usual 11',w:9,last:['M','M','M','M','T'],st:'4 of the last 5 pings missed (the rule fires at 3). Kip sees it in plain words, not a guess.'},
+    {n:'2 · Kip sends a check-in',say:'One click. Logged. No ticket, no guessing.',cls:'alert',pill:'QUIET',pc:'quiet',val:'1 · usual 11',w:9,last:['M','M','M','M','T'],st:'Check-in sent, no reply yet. It is a push, not a ping: no score effect.'},
+    {n:'3 · Phase 1 ships',say:'90 seconds again, and a fair score.',cls:'alert',pill:'QUIET',pc:'quiet',val:'5 · usual 11',w:45,last:['M','T','K','K','T'],st:'Pings come back. Quiet stays until 4 of the last 5 are taken.'},
+    {n:'4 · Back in rotation',say:'There you are, Mite!',cls:'ok',pill:'BACK IN ROTATION',pc:'ok',val:'10 · usual 11',w:91,last:['K','K','T','K','K'],st:'4 of the last 5 taken: the badge clears by itself. Kip cannot dismiss it, and the responder sees it too.'}
+  ];
+  var cur=0, steps=document.getElementById('steps');
+  S.forEach(function(s,k){var b=document.createElement('button');b.className='st';b.textContent=s.n;b.onclick=function(){show(k)};steps.appendChild(b)});
+  var nb=document.createElement('button');nb.className='nb';nb.textContent='Next step ▶';nb.style.marginTop='4px';nb.onclick=function(){show((cur+1)%S.length)};steps.appendChild(nb);
+  function show(k){
+    cur=k;var s=S[k];
+    [].forEach.call(steps.querySelectorAll('.st'),function(b,j){b.classList.toggle('on',j===k)});
+    var c=document.getElementById('cMite');c.className='panel card mite '+s.cls;
+    var p=document.getElementById('pMite');p.className='pill '+s.pc;p.textContent=s.pill;
+    document.getElementById('mVal').textContent=s.val;
+    var f=document.getElementById('mFill');f.style.width=s.w+'%';f.className='fill'+(k===3?' good':'');
+    document.getElementById('kipbubble').textContent=s.say;
+    document.getElementById('mStatus').textContent=s.st;
+    var l=document.getElementById('l5');l.innerHTML='<span class="t">Last 5</span>';
+    s.last.forEach(function(o){var e=document.createElement('span');e.className='o '+o;e.textContent=o==='K'?'✓':o;e.title=o==='M'?'missed':o==='T'?'turned down':'taken';l.appendChild(e)});
+  }
+  show(0);
+})();
+</script>
+</body>
+</html>
