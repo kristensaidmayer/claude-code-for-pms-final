@@ -32,35 +32,11 @@ yes and give me a 60 second explanation of what the problem is and where to go f
 
 ### 5.
 
-what say you about unaswered callouts: 
-
-Why I'd still lead with unanswered callouts
-
-* A missed ping isn't necessarily a failure. If the next responder takes the callout, the only cost is some delay. ELT cares about callouts that didn't get covered, and missed pings can rise without that happening.
-* The missed rate partly changes by definition. A 60-second wait will record more misses than a 90-second one even if responders behave exactly the same. It's a good diagnostic, but it can look worse or better than the real outcome.
-* It's a mechanism. Presenting it first invites a debate about the wait setting, when the question for ELT is whether handlers are getting coverage.
+what say you about unaswered callouts:
 
 ### 6.
 
-how about these things other people are suggeting: 
-
-4.2 doubled callouts nobody took (5% → 11%), and the change meant to ping the closest responder first actually did it less often (80% → 63%); acceptance looks like it's recovering only because four responders have been almost cut out of the rotation.
- 
-The share of callouts nobody took doubled after 4.2, from 5.5% to 11.1%.
-In plain terms: before 4.2, about 1 in 18 incidents ended with nobody taking the callout. Since 4.2 it's about 1 in 9.
- 
-Callout volume fell, and that changes how to read the drop in pickups. Total pings sent fell only about 5%, but callouts fell about 15%. Most of the 20% fall in pings taken follows the fall in callouts, not a worse hit rate.
-I compared 29 Jun to 11 Aug (44 days) with 12 Aug to 6 Sep (26 days), using per-day rates so the unequal windows don't distort anything.
- 
-Per day	Before	After	Change
-Callouts	20.0	16.9	-15%
-Pings sent	24.7	23.5	-5%
-Pings taken	18.9	15.0	-20%
-Pings per callout	1.23	1.39	+13%
-Callouts where no one took it	5.5%	11.1%	doubled
- 
- 
-The most significant number is the share of callouts that nobody took. It roughly doubled, from 5.1% before 4.2 to 10.8% after.
+how about these things other people are suggeting:
 
 ### 7.
 
