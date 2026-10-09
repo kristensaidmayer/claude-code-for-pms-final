@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rook Dispatch Console: Quiet responders (prototype)</title>
+<style>
+/* Prototype of the Coverage view in the Rook Dispatch web console, with the Quiet badge and check-in from 05-super-speed/brief.md (phase 2). Single file, no dependencies. */
+:root {
+  --bg: #eef0f4;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5b6577;
+  --line: #d9dde5;
+  --nav: #1b2230;
+  --nav-fg: #e6e9ef;
+  --accent: #2b5fd9;
+  --accent-fg: #ffffff;
+  --tint: #eaf0fc;
+  --miss: #b8400b;
+  --miss-tint: #fdf0e8;
+  --good: #15803d;
+  --good-tint: #e6f5ec;
+  --proto: #fff8dc;
+  --proto-line: #e2cf86;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2c3442;
+    --nav: #0b0e13; --accent: #7ea4ff; --accent-fg: #0b1020; --tint: #1e2840;
+    --miss: #fb923c; --miss-tint: #33231a; --good: #4ade80; --good-tint: #17281e;
+    --proto: #2b2610; --proto-line: #6b5e1f;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Console chrome */
+.nav { background: var(--nav); color: var(--nav-fg); display: flex; align-items: center; gap: 22px; padding: 0 20px; height: 48px; flex-wrap: wrap; }
+.brand { font-weight: 700; letter-spacing: .02em; }
+.tabs { display: flex; gap: 4px; flex: 1; }
+.tab { padding: 14px 10px 12px; color: #a9b2c3; border-bottom: 3px solid transparent; font-size: 14px; }
+.tab.on { color: #fff; border-bottom-color: var(--accent); }
+.who { font-size: 13px; color: #a9b2c3; }
+.page { max-width: 1180px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 20px; align-items: start; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+h1 { font-size: 1.35rem; margin: 0; }
+.sub { color: var(--muted); font-size: 13px; }
+.filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chip { background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; font-size: 13px; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.chip .n { font-family: var(--mono); margin-left: 6px; }
+.chip.alert:not([aria-pressed="true"]) { border-color: var(--miss); color: var(--miss); background: var(--miss-tint); font-weight: 600; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card.quiet { border-color: var(--miss); box-shadow: 0 0 0 1px var(--miss); }
+.card.back { border-color: var(--good); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.name { font-size: 1.1rem; font-weight: 700; }
+.status { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 10px; border: 1px solid var(--line); background: var(--tint); }
+.badge { font-size: 12px; font-weight: 700; border-radius: 6px; padding: 3px 9px; letter-spacing: .03em; text-transform: uppercase; }
+.badge.quiet { background: var(--miss); color: #fff; }
+.badge.back { background: var(--good); color: #fff; }
+@media (prefers-color-scheme: dark) { .badge.quiet, .badge.back { color: #0b1020; } }
+.vol { display: flex; flex-direction: column; gap: 6px; }
+.vol .line { display: grid; grid-template-columns: 78px 1fr 36px; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+.vol .bar { height: 10px; background: var(--tint); border-radius: 5px; overflow: hidden; }
+.vol .fill { height: 100%; background: var(--accent); }
+.vol .fill.low { background: var(--miss); }
+.vol .num { font-family: var(--mono); text-align: right; color: var(--fg); }
+.pings { display: flex; gap: 6px; flex-wrap: wrap; }
+.p { font-size: 12px; border-radius: 6px; padding: 3px 9px; border: 1px solid var(--line); background: var(--surface); }
+.p.M { background: var(--miss-tint); color: var(--miss); border-color: var(--miss); font-weight: 600; }
+.p.T { background: var(--good-tint); color: var(--good); border-color: var(--good); font-weight: 600; }
+.p.D { color: var(--muted); }
+.reason { background: var(--miss-tint); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.reason.good { background: var(--good-tint); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 600; font-size: 14px; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+.link { background: none; border: 0; color: var(--accent); padding: 0; font-size: 13px; text-align: left; text-decoration: underline; }
+.detail { border-top: 1px dashed var(--line); padding-top: 10px; font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
+.detail table { border-collapse: collapse; width: 100%; }
+.detail td, .detail th { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+.detail th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.detail td.m { font-family: var(--mono); }
+.log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.log li { display: grid; grid-template-columns: 62px 1fr; gap: 8px; }
+.log time { font-family: var(--mono); color: var(--muted); }
+.note { font-size: 12px; color: var(--muted); }
+.empty { padding: 28px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; grid-column: 1 / -1; }
+
+/* Prototype controls (not part of the product) */
+.proto { background: var(--proto); border: 1px dashed var(--proto-line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; position: sticky; top: 12px; }
+.proto h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; margin: 0; }
+.proto .btn { width: 100%; text-align: left; }
+.proto .btn.ghost { color: var(--fg); border-color: var(--proto-line); }
+.proto hr { border: 0; border-top: 1px dashed var(--proto-line); width: 100%; margin: 0; }
+.tracker { font-family: var(--mono); font-size: 12px; }
+
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
+  .proto { position: static; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <span class="brand">Rook Dispatch</span>
+  <nav class="tabs" aria-label="Console sections">
+    <span class="tab">Incidents</span>
+    <span class="tab on" aria-current="page">Coverage</span>
+    <span class="tab">Responders</span>
+    <span class="tab">Reports</span>
+  </nav>
+  <span class="who">Handler: Kip · Sat 5 Sep 2026, 11:02pm</span>
+</div>
+
+<div class="page">
+  <main>
+    <div class="head">
+      <div>
+        <h1>Coverage</h1>
+        <div class="sub">Your responders: Meteor Mite and The Gale</div>
+      </div>
+      <div class="filters" role="group" aria-label="Filter responders">
+        <button class="chip" id="fAll" aria-pressed="true">All<span class="n" id="nAll">2</span></button>
+        <button class="chip alert" id="fQuiet" aria-pressed="false">Quiet<span class="n" id="nQuiet">1</span></button>
+      </div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </main>
+
+  <aside class="proto" aria-label="Prototype controls">
+    <h2>Prototype controls</h2>
+    <p style="margin:0">Not part of the product. The responder's phone is phase 3, so these stand in for it. Click anything on the cards too.</p>
+    <hr>
+    <strong>Meteor Mite replies to a check-in</strong>
+    <button class="btn ghost" data-sim="reply-phone">"My phone isn't getting pings"</button>
+    <button class="btn ghost" data-sim="reply-away">"I'm not available right now"</button>
+    <button class="btn ghost" data-sim="reply-fine">"I'm fine, keep pinging me"</button>
+    <hr>
+    <strong>Meteor Mite takes a ping</strong>
+    <button class="btn ghost" data-sim="take">Meteor Mite takes the next ping</button>
+    <div class="tracker" id="tracker"></div>
+    <hr>
+    <button class="btn ghost" data-sim="reset">Reset the prototype</button>
+    <p class="note" style="margin:0">Data: real ping history for 5 Sep 2026 from the ping log. Callouts numbered 4141x and the check-in time are examples.</p>
+  </aside>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var LABEL = { M: "Missed", D: "Turned down", T: "Taken" };
+
+  function fresh() {
+    return {
+      filter: "all",
+      mite: {
+        hist: [
+          { d: "5 Sep 15:06", o: "M", c: 41393 }, { d: "29 Aug 09:15", o: "M", c: 41254 },
+          { d: "27 Aug 20:03", o: "D", c: 41232 }, { d: "22 Aug 20:53", o: "M", c: 41152 },
+          { d: "20 Aug 16:41", o: "M", c: 41114 }
+        ],
+        quiet: true, back: false, sent: false, reply: null, testSent: false, open: false, takes: 0, log: []
+      },
+      gale: {
+        hist: [
+          { d: "5 Sep 19:57", o: "T", c: 41406 }, { d: "5 Sep 18:20", o: "D", c: 41402 },
+          { d: "5 Sep 17:57", o: "T", c: 41401 }, { d: "5 Sep 16:01", o: "T", c: 41397 },
+          { d: "5 Sep 13:13", o: "T", c: 41392 }
+        ],
+        open: false
+      }
+    };
+  }
+  var S = fresh();
+
+  function last5(h) { return h.slice(0, 5); }
+  function cnt(h, o) { return last5(h).filter(function (x) { return x.o === o; }).length; }
+  function $(id) { return document.getElementById(id); }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function pingChips(h) {
+    return '<div class="pings" aria-label="Last 5 pings, newest first">' +
+      last5(h).map(function (x) { return '<span class="p ' + x.o + '">' + LABEL[x.o] + '</span>'; }).join("") + '</div>';
+  }
+  function pingTable(h) {
+    return '<table><thead><tr><th>When</th><th>Callout</th><th>Outcome</th></tr></thead><tbody>' +
+      last5(h).map(function (x) {
+        return '<tr><td>' + esc(x.d) + '</td><td class="m">' + x.c + '</td><td>' + LABEL[x.o] + '</td></tr>';
+      }).join("") + '</tbody></table>';
+  }
+  function volume(label, now, usual) {
+    var max = Math.max(now, usual, 1);
+    return '<div class="line"><span>' + label + '</span><span class="bar"><span class="fill' + (now < usual * 0.5 ? " low" : "") +
+      '" style="display:block;width:' + Math.round(100 * now / max) + '%"></span></span><span class="num">' + now + '</span></div>';
+  }
+
+  function miteCard() {
+    var m = S.mite, h = m.hist, taken7 = 1 + m.takes;
+    var cls = "card" + (m.quiet ? " quiet" : (m.back ? " back" : ""));
+    var out = '<article class="' + cls + '" id="cMite">';
+    out += '<div class="row"><span class="name">Meteor Mite</span><span>' +
+      (m.quiet ? '<span class="badge quiet">Quiet</span>' : (m.back ? '<span class="badge back">Back in rotation</span>' : '<span class="status">Available</span>')) + '</span></div>';
+    out += '<div class="vol">' + volume("Last 7 days", taken7, 11) + volume("Usual week", 11, 11) + '</div>';
+    out += pingChips(h);
+    if (m.quiet) {
+      out += '<div class="reason"><b>' + cnt(h, "M") + ' of the last 5 pings were missed.</b> Missed means no answer inside the wait. It does not tell us whether the phone rang. ' +
+        'Get in touch within 24 hours.</div>';
+    } else if (m.back) {
+      out += '<div class="reason good"><b>Quiet cleared on its own.</b> ' + cnt(h, "T") + ' of the last 5 pings were taken. You did not have to do anything.</div>';
+    } else {
+      out += '<div class="note">Steady.</div>';
+    }
+    if (m.quiet) {
+      out += '<div class="actions">' +
+        '<button class="btn" data-act="checkin"' + (m.sent ? " disabled" : "") + '>' + (m.sent ? "Check-in sent" : "Send check-in") + '</button>' +
+        '<button class="btn ghost" data-act="checkedin"' + (m.log.some(function (l) { return l.k === "note"; }) ? " disabled" : "") + '>Mark "checked in"</button></div>';
+      if (m.sent) out += '<div class="note">One check-in per responder every 24 hours. It is a message, not a ping: no callout, no effect on ranking.</div>';
+    }
+    if (m.log.length) {
+      out += '<ul class="log" aria-label="Activity">' + m.log.map(function (l) {
+        return '<li><time>' + l.t + '</time><span>' + l.x + '</span></li>';
+      }).join("") + '</ul>';
+    }
+    out += '<button class="link" data-act="toggle-mite" aria-expanded="' + m.open + '">' + (m.open ? "Hide" : (m.quiet ? "Why is this Quiet?" : "Show ping history")) + '</button>';
+    if (m.open) {
+      out += '<div class="detail"><div><b>The rule.</b> Quiet turns on when 3 of the last 5 pings are missed. It turns off when 4 of the last 5 are taken. You cannot dismiss it, so it cannot hide a problem. It changes nothing in routing, and nobody can see or change a score.</div>' +
+        pingTable(h) +
+        '<div class="note">Before 4.2 (12 Aug) Meteor Mite averaged about 11 pings a week. Since then, about 4.</div></div>';
+    }
+    return out + '</article>';
+  }
+
+  function galeCard() {
+    var g = S.gale;
+    var out = '<article class="card" id="cGale">';
+    out += '<div class="row"><span class="name">The Gale</span><span class="status">Available</span></div>';
+    out += '<div class="vol">' + volume("Last 7 days", 27, 13) + volume("Usual week", 13, 13) + '</div>';
+    out += pingChips(g.hist);
+    out += '<div class="note">Busier than usual: 27 pings in 7 days against about 13. Nothing to do.</div>';
+    out += '<button class="link" data-act="toggle-gale" aria-expanded="' + g.open + '">' + (g.open ? "Hide" : "Show ping history") + '</button>';
+    if (g.open) out += '<div class="detail">' + pingTable(g.hist) + '</div>';
+    return out + '</article>';
+  }
+
+  function render() {
+    var quietN = S.mite.quiet ? 1 : 0;
+    $("nQuiet").textContent = quietN;
+    $("fAll").setAttribute("aria-pressed", String(S.filter === "all"));
+    $("fQuiet").setAttribute("aria-pressed", String(S.filter === "quiet"));
+    var html = "";
+    if (S.filter === "quiet") {
+      html = S.mite.quiet ? miteCard() : '<div class="empty">No Quiet responders. Nobody on your list has missed 3 of their last 5 pings.</div>';
+    } else {
+      html = miteCard() + galeCard();
+    }
+    $("cards").innerHTML = html;
+    var m = S.mite;
+    $("tracker").textContent = "Last 5 pings taken: " + cnt(m.hist, "T") + " of 5" + (m.quiet ? " (needs 4 to clear)" : " (cleared)");
+  }
+
+  function stamp() { return "11:" + String(4 + S.mite.log.length).padStart(2, "0") + "pm"; }
+  function addLog(k, x) { S.mite.log.push({ k: k, t: stamp(), x: x }); }
+
+  function reply(kind) {
+    var m = S.mite;
+    if (!m.sent) { addLog("sys", "Check-in sent automatically so the reply has something to answer."); m.sent = true; }
+    if (m.reply) { return; }
+    m.reply = kind;
+    if (kind === "phone") addLog("reply", "<b>Meteor Mite replied:</b> my phone isn't getting pings. Test ping sent. Delivery not confirmed yet, because we have no push receipts.");
+    if (kind === "away") addLog("reply", "<b>Meteor Mite replied:</b> not available right now. Shown to you only. It is not written to the availability record until Wen Li and the Supply team have signed that off, so routing does not change.");
+    if (kind === "fine") addLog("reply", "<b>Meteor Mite replied:</b> I'm fine, keep pinging me. Quiet stays until 4 of the last 5 pings are taken.");
+    render();
+  }
+
+  function take() {
+    var m = S.mite;
+    m.takes += 1;
+    m.hist.unshift({ d: "Next ping (example)", o: "T", c: 41409 + m.takes });
+    addLog("sys", "Meteor Mite took a ping. " + cnt(m.hist, "T") + " of the last 5 taken.");
+    if (m.quiet && cnt(m.hist, "T") >= 4) {
+      m.quiet = false; m.back = true;
+      addLog("sys", "Quiet cleared automatically: 4 of the last 5 pings taken.");
+    }
+    render();
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-act],[data-sim],#fAll,#fQuiet");
+    if (!t) return;
+    var m = S.mite;
+    if (t.id === "fAll") { S.filter = "all"; return render(); }
+    if (t.id === "fQuiet") { S.filter = "quiet"; return render(); }
+    var a = t.getAttribute("data-act"), s = t.getAttribute("data-sim");
+    if (a === "checkin" && !m.sent) { m.sent = true; addLog("sys", "Check-in sent to Meteor Mite. No reply yet."); }
+    if (a === "checkedin") { addLog("note", "Note: you checked in with Meteor Mite by phone. This does not clear Quiet."); }
+    if (a === "toggle-mite") m.open = !m.open;
+    if (a === "toggle-gale") S.gale.open = !S.gale.open;
+    if (s === "reply-phone") return reply("phone");
+    if (s === "reply-away") return reply("away");
+    if (s === "reply-fine") return reply("fine");
+    if (s === "take") return take();
+    if (s === "reset") { S = fresh(); }
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

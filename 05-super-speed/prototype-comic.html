@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rook Dispatch Console: Quiet responders (comic prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Comic-book skin over the Quiet-responder Coverage screen (05-super-speed/brief.md, phase 2). Same behaviour as prototype.html: Silver Age cover meets ops console. Single deliberate look, so no dark-mode switch. Ink black outlines, halftone paper, hard offset shadows. */
+:root {
+  color-scheme: light;
+  --ink: #111018;
+  --paper: #fffbea;
+  --paper-2: #fff3c4;
+  --purple: #2a1458;
+  --purple-2: #3d1f7a;
+  --blue: #1f5cff;
+  --blue-2: #0b2fa8;
+  --red: #e4202d;
+  --red-2: #a3121c;
+  --yellow: #ffd60a;
+  --green: #12a150;
+  --mute: #4a4560;
+  --display: "Bangers", Impact, "Arial Black", "Haettenschweiler", sans-serif;
+  --cond: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+  --body: "Barlow", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background-color: var(--purple);
+  background-image: radial-gradient(rgba(255,255,255,.09) 1.6px, transparent 1.8px), radial-gradient(rgba(255,214,10,.06) 1.6px, transparent 1.8px);
+  background-size: 14px 14px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+  color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45;
+}
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+/* Masthead: comic cover */
+.mast { position: relative; overflow: hidden; background: var(--blue); border-bottom: 6px solid var(--ink); }
+.mast::before { content: ""; position: absolute; inset: -60%; background: repeating-conic-gradient(from 0deg at 28% 50%, rgba(255,255,255,.16) 0 3deg, transparent 3deg 9deg); }
+.mast::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(17,16,24,.22) 2px, transparent 2.2px); background-size: 10px 10px; mix-blend-mode: multiply; }
+.mast-in { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 14px 20px 12px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.logo { font-family: var(--display); font-size: clamp(2.4rem, 6vw, 4rem); line-height: .95; letter-spacing: .03em; color: var(--yellow); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--ink); transform: skew(-6deg) rotate(-1.5deg); margin: 0; }
+.logo small { display: block; font-size: .38em; color: #fff; letter-spacing: .12em; text-shadow: 2px 2px 0 var(--ink); }
+.issue { background: var(--red); color: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 3px 12px; font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; transform: rotate(2deg); }
+.tabs { display: flex; gap: 6px; margin-left: auto; align-self: flex-end; max-width: 100%; overflow-x: auto; padding-right: 4px; }
+.tab { white-space: nowrap; }
+.tab { font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 15px; background: var(--paper); color: var(--mute); border: 3px solid var(--ink); border-bottom: 0; padding: 4px 12px; border-radius: 6px 6px 0 0; }
+.tab.on { background: var(--yellow); color: var(--ink); }
+.kipbox { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
+.kipbox .tag { font-family: var(--cond); color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 13px; line-height: 1.1; text-shadow: 1px 1px 0 var(--ink); }
+
+/* Layout */
+.page { max-width: 1200px; margin: 0 auto; padding: 22px 20px 48px; display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 24px; align-items: start; }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+h1 { font-family: var(--display); font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: .04em; color: #fff; -webkit-text-stroke: 1.5px var(--ink); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--ink); margin: 0; line-height: 1; transform: skew(-4deg); }
+.sub { color: #e8e0ff; font-size: 14px; margin-top: 6px; }
+.kipsay { position: relative; max-width: 330px; }
+.filters { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.chip { font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 15px; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); border-radius: 6px; padding: 3px 14px; transition: transform .08s, box-shadow .08s; }
+.chip:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+.chip[aria-pressed="true"] { background: var(--yellow); }
+.chip.alert:not([aria-pressed="true"]) { background: var(--red); color: #fff; }
+.chip .n { font-family: var(--mono); margin-left: 8px; background: var(--ink); color: #fff; border-radius: 4px; padding: 0 6px; font-size: 13px; }
+
+/* Speech bubbles */
+.bubble { position: relative; background: #fff; color: var(--ink); border: 3px solid var(--ink); border-radius: 18px; padding: 8px 14px; font-family: var(--cond); font-weight: 700; font-size: 17px; line-height: 1.15; box-shadow: 3px 3px 0 var(--ink); }
+.bubble::before, .bubble::after { content: ""; position: absolute; left: 28px; border-style: solid; border-color: transparent; }
+.bubble.up::before { top: -17px; border-width: 0 12px 17px 6px; border-bottom-color: var(--ink); }
+.bubble.up::after { top: -11px; left: 31px; border-width: 0 9px 13px 4px; border-bottom-color: #fff; }
+.bubble.left::before { left: -17px; top: 14px; border-width: 8px 17px 8px 0; border-right-color: var(--ink); }
+.bubble.left::after { left: -11px; top: 16px; border-width: 6px 13px 6px 0; border-right-color: #fff; }
+.bubble.think { border-radius: 40px; }
+
+/* Cards as comic panels */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; align-items: start; }
+.card { position: relative; background: var(--paper); border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); display: flex; flex-direction: column; min-width: 0; transform: rotate(-.35deg); transition: transform .15s; }
+.card:nth-child(2) { transform: rotate(.35deg); }
+.card:hover { transform: rotate(0) translateY(-2px); }
+.card::after { content: ""; position: absolute; right: 0; top: 0; width: 55%; height: 38%; pointer-events: none; background-image: radial-gradient(rgba(17,16,24,.11) 1.6px, transparent 1.8px); background-size: 8px 8px; -webkit-mask-image: linear-gradient(225deg, #000, transparent 75%); mask-image: linear-gradient(225deg, #000, transparent 75%); }
+.card .band { display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-bottom: 4px solid var(--ink); position: relative; overflow: hidden; }
+.card .band::before { content: ""; position: absolute; inset: -50%; background: repeating-conic-gradient(from 0deg at 14% 50%, rgba(255,255,255,.18) 0 3deg, transparent 3deg 8deg); }
+.card.mite .band { background: var(--red); }
+.card.gale .band { background: var(--blue); }
+.card.quiet .band { background: #5a5575; }
+.card.back .band { background: var(--green); }
+.hero { position: relative; z-index: 1; flex: none; width: 96px; height: 96px; }
+.hero svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.card.quiet .hero .face { filter: grayscale(.55) brightness(.9); animation: fade 2.4s ease-in-out infinite; }
+.hname { position: relative; z-index: 1; min-width: 0; }
+.hname .name { font-family: var(--display); font-size: 2.2rem; line-height: .95; letter-spacing: .04em; color: #fff; -webkit-text-stroke: 1.5px var(--ink); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--ink); transform: skew(-5deg); display: inline-block; }
+.hname .alias { display: block; font-family: var(--cond); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; color: #fff; text-shadow: 1px 1px 0 var(--ink); }
+.body { padding: 14px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 1; }
+
+/* Power badges */
+.pw { display: inline-block; font-family: var(--display); letter-spacing: .06em; font-size: 1.15rem; padding: 2px 12px 1px; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); transform: rotate(-2deg); color: #fff; }
+.pw small { display: block; font-family: var(--cond); font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; margin-top: -2px; }
+.pw.on { background: var(--blue); animation: charge 2.2s ease-in-out infinite; }
+.pw.quiet { background: var(--red); animation: flicker 1.8s steps(1) infinite; }
+.pw.back { background: var(--green); animation: restore 1.2s ease-out 1; }
+@keyframes charge { 0%, 100% { box-shadow: 3px 3px 0 var(--ink), 0 0 0 0 rgba(31,92,255,.0); } 50% { box-shadow: 3px 3px 0 var(--ink), 0 0 14px 4px rgba(31,92,255,.75); } }
+@keyframes flicker { 0%, 100% { opacity: 1; } 8% { opacity: .35; } 12% { opacity: 1; } 55% { opacity: 1; } 58% { opacity: .5; } 62% { opacity: 1; } 80% { opacity: .75; } 84% { opacity: 1; } }
+@keyframes restore { 0% { transform: rotate(-2deg) scale(.4); } 55% { transform: rotate(-2deg) scale(1.25); } 100% { transform: rotate(-2deg) scale(1); } }
+@keyframes fade { 0%, 100% { opacity: 1; } 50% { opacity: .72; } }
+
+/* Power meter */
+.meter { display: flex; flex-direction: column; gap: 5px; }
+.meter .lab { display: flex; justify-content: space-between; gap: 8px; font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 14px; }
+.meter .lab b { font-family: var(--mono); font-size: 13px; letter-spacing: 0; }
+.track { height: 20px; background: #fff; border: 3px solid var(--ink); position: relative; overflow: hidden; }
+.fill { height: 100%; background: repeating-linear-gradient(115deg, var(--blue) 0 10px, #4d84ff 10px 20px); border-right: 3px solid var(--ink); transition: width .6s cubic-bezier(.2,.9,.3,1.2); }
+.fill.low { background: repeating-linear-gradient(115deg, var(--red) 0 10px, #ff5c66 10px 20px); }
+.fill.surge { background: repeating-linear-gradient(115deg, var(--yellow) 0 10px, #fff08a 10px 20px); }
+.usual { position: absolute; right: 0; top: 0; bottom: 0; width: 3px; background: var(--ink); }
+
+/* Captions and pings */
+.caption { background: var(--yellow); border: 3px solid var(--ink); padding: 8px 12px; font-size: 15px; box-shadow: 3px 3px 0 var(--ink); }
+.caption .meanwhile { font-family: var(--display); letter-spacing: .05em; font-size: 1.05rem; margin-right: 4px; }
+.caption.good { background: #9be8b4; }
+.pings { display: flex; gap: 6px; flex-wrap: wrap; }
+.p { font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 14px; padding: 1px 9px; border: 3px solid var(--ink); background: #fff; }
+.p.M { background: var(--red); color: #fff; }
+.p.T { background: var(--green); color: #fff; }
+.p.D { background: #d9d6e6; color: var(--ink); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { font-family: var(--display); letter-spacing: .06em; font-size: 1.2rem; background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 4px 16px 2px; transition: transform .08s, box-shadow .08s; }
+.btn:hover:not(:disabled) { background: #ffe55c; }
+.btn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+.btn.ghost { background: #fff; font-family: var(--cond); font-weight: 700; font-size: 1rem; letter-spacing: .04em; text-transform: uppercase; }
+.btn:disabled { background: #c9c4d9; color: #6b6585; box-shadow: 2px 2px 0 var(--ink); cursor: default; }
+.link { background: none; border: 0; padding: 0; color: var(--blue-2); font-family: var(--cond); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; text-align: left; }
+.note { font-size: 13px; color: var(--mute); }
+.log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.log li { display: grid; grid-template-columns: 64px 1fr; gap: 8px; background: #fff; border: 2px solid var(--ink); padding: 5px 8px; font-size: 14px; }
+.log time { font-family: var(--mono); font-size: 12px; color: var(--mute); padding-top: 2px; }
+.detail { border-top: 3px dashed var(--ink); padding-top: 10px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+.detail table { border-collapse: collapse; width: 100%; background: #fff; border: 3px solid var(--ink); }
+.detail th { font-family: var(--cond); text-transform: uppercase; letter-spacing: .06em; background: var(--ink); color: #fff; text-align: left; padding: 3px 8px; font-size: 13px; }
+.detail td { padding: 4px 8px; border-bottom: 1px solid #d9d6e6; }
+.detail td.m { font-family: var(--mono); font-size: 13px; }
+.empty { grid-column: 1 / -1; background: var(--paper); border: 4px dashed var(--ink); padding: 30px; text-align: center; font-family: var(--cond); font-weight: 700; font-size: 1.2rem; text-transform: uppercase; letter-spacing: .05em; }
+
+/* Editor's note (prototype controls) */
+.proto { position: sticky; top: 14px; background: var(--paper-2); border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 14px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; transform: rotate(.6deg); }
+.proto h2 { font-family: var(--display); letter-spacing: .06em; font-size: 1.4rem; margin: 0; }
+.proto hr { border: 0; border-top: 2px dashed var(--ink); width: 100%; margin: 0; }
+.proto .btn { width: 100%; text-align: left; }
+.tracker { font-family: var(--mono); font-size: 12px; background: #fff; border: 2px solid var(--ink); padding: 4px 8px; }
+
+/* Sidekicks and mascots */
+.card .band { flex-wrap: wrap; }
+.band .sidekick { position: relative; z-index: 1; margin-left: auto; width: 92px; height: 84px; flex: none; }
+.sidekick svg, .pet svg, .pets-row svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pets { position: relative; z-index: 1; display: flex; align-items: flex-end; gap: 6px; margin-left: auto; }
+.pet { background: none; border: 0; padding: 0; width: 92px; height: 84px; cursor: pointer; transition: transform .15s; }
+.pet:hover { transform: translateY(-4px) rotate(-3deg); }
+.pet.bounce { animation: hop .5s ease-out; }
+@keyframes hop { 0% { transform: translateY(0); } 40% { transform: translateY(-16px) rotate(-6deg); } 100% { transform: translateY(0); } }
+.pets-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; }
+.pets-row > span { width: 100px; height: 91px; display: block; }
+
+/* Impact bursts */
+.fx { position: fixed; inset: 0; pointer-events: none; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.burst { position: relative; width: min(78vw, 420px); aspect-ratio: 1; display: grid; place-items: center; animation: pop 1.5s cubic-bezier(.2,.9,.3,1.3) forwards; }
+.burst svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(6px 6px 0 var(--ink)); }
+.burst span { position: relative; font-family: var(--display); font-size: clamp(2rem, 9vw, 3.6rem); line-height: .95; letter-spacing: .04em; text-align: center; color: #fff; -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--ink); transform: rotate(-6deg); padding: 0 14%; }
+@keyframes pop { 0% { transform: scale(.15) rotate(-18deg); opacity: 0; } 22% { transform: scale(1.12) rotate(3deg); opacity: 1; } 34% { transform: scale(1) rotate(-2deg); } 80% { transform: scale(1) rotate(-2deg); opacity: 1; } 100% { transform: scale(1.15) rotate(-2deg); opacity: 0; } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
+  .proto { position: static; transform: none; }
+  .tabs { margin-left: 0; }
+  .pets { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Mission briefing */
+.mission { background: var(--paper); border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); margin-top: 34px; }
+.mission summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--red); border-bottom: 4px solid var(--ink); font-family: var(--display); letter-spacing: .06em; font-size: 1.5rem; color: #fff; -webkit-text-stroke: 1.2px var(--ink); paint-order: stroke fill; text-shadow: 2px 2px 0 var(--ink); }
+.mission summary::-webkit-details-marker { display: none; }
+.mission summary::after { content: "\25BE"; margin-left: auto; font-size: 1rem; }
+.mission[open] summary::after { content: "\25B4"; }
+.mission .mb { padding: 14px 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; font-size: 14.5px; }
+.mission h3 { font-family: var(--cond); text-transform: uppercase; letter-spacing: .07em; font-size: 14px; margin: 0 0 4px; color: var(--red-2); }
+.mission p { margin: 0; }
+.mission ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.mission .solves { grid-column: 1 / -1; background: var(--yellow); border: 3px solid var(--ink); padding: 8px 12px; font-weight: 600; }
+@media (max-width: 900px) { .mission .mb { grid-template-columns: 1fr; } }
+
+/* Badge explainer, timeline, why-3-of-5 */
+.tip { position: relative; display: inline-block; align-self: flex-start; }
+.tip:focus { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.tipbox { display: none; position: absolute; left: 0; top: calc(100% + 10px); z-index: 20; width: min(300px, 80vw); background: #fff; color: var(--ink); border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); padding: 10px 12px; font-family: var(--body); font-size: 14px; line-height: 1.35; }
+.tipbox::before { content: ""; position: absolute; top: -14px; left: 22px; border: 7px solid transparent; border-bottom: 7px solid var(--ink); }
+.tip:hover .tipbox, .tip:focus .tipbox, .tip:focus-within .tipbox { display: block; }
+.tipbox b.h { font-family: var(--display); letter-spacing: .04em; font-weight: 400; font-size: 1.1rem; display: block; margin-bottom: 4px; }
+.tipbox ol { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.tipbox li { display: flex; gap: 8px; align-items: center; font-family: var(--cond); font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; }
+.tipbox li i { font-style: normal; width: 22px; height: 22px; border: 2px solid var(--ink); display: inline-grid; place-items: center; color: #fff; font-size: 14px; }
+.tipbox li.M i { background: var(--red); } .tipbox li.T i { background: var(--green); } .tipbox li.D i { background: #8e89a6; }
+.tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tl li { display: grid; grid-template-columns: 92px 1fr; gap: 10px; align-items: start; }
+.tl .when { font-family: var(--display); letter-spacing: .05em; background: var(--yellow); border: 3px solid var(--ink); padding: 0 6px; text-align: center; font-size: 1rem; transform: rotate(-1.5deg); }
+.tl .when.now { background: var(--red); color: #fff; }
+.tl .what { background: #fff; border: 2px solid var(--ink); padding: 4px 8px; font-size: 13.5px; }
+.tl .rp { font-family: var(--cond); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; background: #bfe3ff; border: 1px solid var(--ink); padding: 0 5px; margin-left: 4px; }
+.why35 { background: #fff; border: 3px solid var(--ink); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
+.why35 .pick { background: var(--yellow); border: 2px solid var(--ink); padding: 4px 8px; font-weight: 700; }
+.why35 dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; }
+.why35 dt { font-weight: 700; } .why35 dd { margin: 0; }
+.detail h4 { font-family: var(--display); font-weight: 400; letter-spacing: .05em; font-size: 1.2rem; margin: 4px 0 0; }
+.mission .demo { grid-column: 1 / -1; background: #bfe3ff; border: 3px solid var(--ink); padding: 8px 12px; font-weight: 600; }
+
+/* BACK IN ACTION banner */
+.banner { position: fixed; left: 0; right: 0; top: 18%; z-index: 60; pointer-events: auto; cursor: pointer; overflow: hidden; border-block: 6px solid var(--ink); background: var(--blue); box-shadow: 0 10px 0 rgba(17,16,24,.55); animation: slide 4.2s cubic-bezier(.2,.9,.3,1.1) forwards; }
+.banner::before { content: ""; position: absolute; inset: -150%; background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.18) 0 4deg, transparent 4deg 10deg); animation: spin 14s linear infinite; }
+.banner .in { position: relative; padding: 16px 20px 14px; text-align: center; }
+.banner .big { font-family: var(--display); font-size: clamp(2.6rem, 10vw, 5.2rem); line-height: .95; letter-spacing: .05em; color: var(--yellow); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; text-shadow: 6px 6px 0 var(--ink); transform: skew(-6deg) rotate(-1.5deg); }
+.banner .small { margin-top: 8px; display: inline-block; background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 4px 14px; font-family: var(--cond); font-weight: 700; font-size: clamp(1rem, 2.6vw, 1.35rem); text-transform: uppercase; letter-spacing: .04em; }
+.banner .x { position: absolute; right: 10px; top: 6px; font-family: var(--cond); font-weight: 700; color: #fff; text-shadow: 1px 1px 0 var(--ink); }
+@keyframes slide { 0% { transform: translateX(-110%) skewX(-8deg); } 10% { transform: translateX(3%) skewX(-8deg); } 16% { transform: translateX(0) skewX(0); } 88% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(110%) skewX(-8deg); opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .banner { animation: none !important; } .banner::before { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="logo">ROOK DISPATCH<small>The right hero, right now</small></div>
+    <span class="issue">Issue 4.2 · Coverage</span>
+    <nav class="tabs" aria-label="Console sections">
+      <span class="tab">Incidents</span>
+      <span class="tab on" aria-current="page">Coverage</span>
+      <span class="tab">Responders</span>
+      <span class="tab">Reports</span>
+    </nav>
+    <div class="kipbox">
+      <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" id="kipAvatar"></svg>
+      <div class="tag">Handler: Kip<br><span id="when">Sat 5 Sep 2026, 11:02pm</span></div>
+    </div>
+    <div class="pets" aria-label="Mascots">
+      <button class="pet" id="petPup" aria-label="A puppy hero in a teal cape. Click for a woof."></button>
+      <button class="pet" id="petKitty" aria-label="A kitty hero in a purple cape. Click for a meow."></button>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <main>
+    <div class="head">
+      <div>
+        <h1>Coverage</h1>
+        <div class="sub">Your heroes: Meteor Mite and The Gale</div>
+        <div class="filters" role="group" aria-label="Filter responders">
+          <button class="chip" id="fAll" aria-pressed="true">All heroes<span class="n" id="nAll">2</span></button>
+          <button class="chip alert" id="fQuiet" aria-pressed="false">Quiet<span class="n" id="nQuiet">1</span></button>
+        </div>
+      </div>
+      <div class="kipsay"><div class="bubble think" id="kipBubble"></div></div>
+    </div>
+    <div class="cards" id="cards"></div>
+    <details class="mission" open>
+      <summary>Mission impact</summary>
+      <div class="mb">
+        <div><h3>The problem</h3><p>4 of 16 heroes quietly fell out of the rotation after the 4.2 update. Callouts nobody took rose from 5.1% to 11.2%.</p></div>
+        <div><h3>What this changes</h3><ul><li>Brings back the 90-second wait</li><li>Rebuilds the routing score from ping history</li><li>Adds Quiet detection and a check-in</li></ul></div>
+        <div><h3>What it's for</h3><p>A fair way back into the rotation for heroes who were pushed out. Handlers can spot a silent hero in days, not weeks.</p></div>
+        <div><h3>If we do nothing</h3><ul><li>Heroes quietly fall out of the rotation</li><li>Handlers find out weeks later</li><li>Unanswered callouts stay high</li><li>Heroes think they've been forgotten</li></ul></div>
+        <p class="solves">What this solves: responders were unfairly pushed out of the rotation after a software update, and nobody noticed for weeks. This fixes the routing issue behind the lockouts and adds an early-warning signal so handlers can spot silent heroes before they disappear.</p>
+        <p class="demo">Demo: watch Kip spot Meteor Mite going quiet, send a check-in, and bring them back. Use Hero HQ (the demo controls) to play it out.</p>
+      </div>
+    </details>
+  </main>
+
+  <aside class="proto" aria-label="Hero HQ demo controls">
+    <h2>Hero HQ</h2>
+    <div class="note" style="margin-top:-6px"><b>Demo controls.</b> Not part of the app.</div>
+    <p style="margin:0;font-size:13px">Not part of the product. The responder's phone is phase 3 and time is simulated, so these controls stand in for them. The Quiet rule itself runs live: add pings and watch it raise and clear.</p>
+    <hr>
+    <h3>Who are we poking?</h3>
+    <select id="simTarget" aria-label="Responder to apply controls to">
+      <option value="mite">Meteor Mite</option>
+      <option value="gale">The Gale</option>
+    </select>
+    <h3>Add a ping outcome</h3>
+    <div class="seg">
+      <button class="btn ghost" data-sim="ping-T">Taken</button>
+      <button class="btn ghost" data-sim="ping-D">Turned down</button>
+      <button class="btn ghost" data-sim="ping-M">Missed</button>
+    </div>
+    <div class="tracker" id="tracker"></div>
+    <h3>Try a pattern</h3>
+    <button class="btn ghost" data-sim="scn-streak">3 misses in a row</button>
+    <button class="btn ghost" data-sim="scn-nightwell">Mostly turn-downs (Nightwell pattern)</button>
+    <button class="btn ghost" data-sim="scn-stormwrack">3 misses, then recovers (Stormwrack)</button>
+    <div class="msg" id="simMsg" role="status" aria-live="polite"></div>
+    <h3>Reply to a check-in</h3>
+    <button class="btn ghost" data-sim="reply-phone">"My phone isn't getting pings"</button>
+    <button class="btn ghost" data-sim="reply-away">"I'm not available right now"</button>
+    <button class="btn ghost" data-sim="reply-fine">"I'm fine, keep pinging me"</button>
+    <hr>
+    <h3>Time: <span id="dayNow"></span></h3>
+    <div class="seg">
+      <button class="btn ghost" data-sim="day-1">+1 day</button>
+      <button class="btn ghost" data-sim="day-7">+7 days</button>
+      <button class="btn ghost" data-sim="day-14">+14 days</button>
+    </div>
+    <h3>Quiet scorecard</h3>
+    <div class="score" id="score"></div>
+    <h3>Weekly report to Helen</h3>
+    <div class="score" id="report" style="display:block"></div>
+    <hr>
+    <button class="btn ghost" data-sim="reset">Reset the prototype</button>
+    <p class="note" style="margin:0">Data: real ping history for 5 Sep 2026 from the ping log. Pings you add, callouts numbered 4141x and the clock are simulated. The heroes' looks are invented and stand for cover identities only. The puppy and the kitty are mascots: not responders, and not in the ping log.</p>
+  </aside>
+</div>
+
+<div class="fx" id="fx" aria-hidden="true"></div>
+<div class="sr" role="status" aria-live="polite" id="sr"></div>
+
+<script>
+(function () {
+  "use strict";
+  var LABEL = { M: "Missed", D: "Turned down", T: "Taken" };
+  var INK = "#111018";
+
+  /* ---------- Avatars (stylised, invented; cover identities only) ---------- */
+  function ring(pct, tone) {
+    var C = 2 * Math.PI * 46, on = Math.max(0.02, Math.min(1, pct)) * C;
+    var col = tone === "low" ? "#e4202d" : tone === "surge" ? "#ffd60a" : "#1f5cff";
+    return '<circle cx="50" cy="50" r="46" fill="none" stroke="#fff" stroke-width="7" opacity=".55"/>' +
+      '<circle cx="50" cy="50" r="46" fill="none" stroke="' + INK + '" stroke-width="10" opacity=".0"/>' +
+      '<circle cx="50" cy="50" r="46" fill="none" stroke="' + col + '" stroke-width="7" stroke-linecap="butt" stroke-dasharray="' + on.toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 50 50)"/>' +
+      '<circle cx="50" cy="50" r="49.5" fill="none" stroke="' + INK + '" stroke-width="2"/><circle cx="50" cy="50" r="42.5" fill="none" stroke="' + INK + '" stroke-width="2"/>';
+  }
+  function avatarMite(pct, tone) {
+    return '<svg viewBox="0 0 100 100" role="img" aria-label="Meteor Mite, a small hero in a red cowl with a comet emblem">' +
+      ring(pct, tone) +
+      '<g class="face"><clipPath id="cm"><circle cx="50" cy="50" r="40"/></clipPath>' +
+      '<g clip-path="url(#cm)"><rect width="100" height="100" fill="#ffd60a"/>' +
+      '<g stroke="#ff9d00" stroke-width="3"><path d="M50 50 L0 20 M50 50 L0 50 M50 50 L0 80 M50 50 L100 20 M50 50 L100 50 M50 50 L100 80 M50 50 L25 0 M50 50 L75 0"/></g>' +
+      '<path d="M8 100 Q50 58 92 100 Z" fill="#1f5cff" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M50 70 l3 7 7 .5 -5.5 4.5 2 7 -6.500-4 -6.500 4 2-7 -5.500-4.500 7-.5z" fill="#ffd60a" stroke="' + INK + '" stroke-width="1.5"/>' +
+      '<path d="M30 40 Q30 14 50 14 Q70 14 70 40 Q70 64 50 66 Q30 64 30 40 Z" fill="#e4202d" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M33 22 L28 8 L42 16 Z M67 22 L72 8 L58 16 Z" fill="#e4202d" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M35 38 L46 41 L44 47 L34 44 Z M65 38 L54 41 L56 47 L66 44 Z" fill="#fff" stroke="' + INK + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<path d="M44 56 Q50 59 56 56" fill="none" stroke="' + INK + '" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<path d="M50 8 L47 2 L53 2 Z" fill="#ffd60a" stroke="' + INK + '" stroke-width="1.5"/></g>' +
+      '<circle cx="50" cy="50" r="40" fill="none" stroke="' + INK + '" stroke-width="3"/></g></svg>';
+  }
+  function avatarGale(pct, tone) {
+    return '<svg viewBox="0 0 100 100" role="img" aria-label="The Gale, a hero in a blue cowl with wind swirls">' +
+      ring(pct, tone) +
+      '<g class="face"><clipPath id="cg"><circle cx="50" cy="50" r="40"/></clipPath>' +
+      '<g clip-path="url(#cg)"><rect width="100" height="100" fill="#bfe3ff"/>' +
+      '<g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M-4 30 Q20 22 36 30 T70 28 T104 26"/><path d="M-4 48 Q18 40 34 48 T68 46 T104 44"/><path d="M-4 66 Q20 58 36 66 T70 64 T104 62"/></g>' +
+      '<path d="M4 100 Q50 60 96 100 Z" fill="#3d1f7a" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M50 74 q-9 3 -9 11 q9 -2 9 -11 q0 9 9 11 q0 -8 -9 -11z" fill="#ffd60a" stroke="' + INK + '" stroke-width="1.5"/>' +
+      '<path d="M30 40 Q30 12 50 12 Q70 12 70 40 Q70 64 50 66 Q30 64 30 40 Z" fill="#1f5cff" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M32 26 Q50 4 74 20 Q60 20 50 26 Q40 24 32 26 Z" fill="#0b2fa8" stroke="' + INK + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<path d="M34 41 Q40 36 46 42 L44 47 Q38 47 34 41 Z M66 41 Q60 36 54 42 L56 47 Q62 47 66 41 Z" fill="#fff" stroke="' + INK + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<path d="M44 57 Q50 55 56 57" fill="none" stroke="' + INK + '" stroke-width="2.5" stroke-linecap="round"/></g>' +
+      '<circle cx="50" cy="50" r="40" fill="none" stroke="' + INK + '" stroke-width="3"/></g></svg>';
+  }
+  function avatarKip() {
+    return '<circle cx="50" cy="50" r="46" fill="#ffd60a" stroke="' + INK + '" stroke-width="5"/>' +
+      '<path d="M14 94 Q50 62 86 94 Q50 104 14 94Z" fill="#3d1f7a" stroke="' + INK + '" stroke-width="4"/>' +
+      '<circle cx="50" cy="46" r="21" fill="#f2c9a0" stroke="' + INK + '" stroke-width="4"/>' +
+      '<path d="M27 44 Q28 22 50 22 Q72 22 73 44" fill="none" stroke="' + INK + '" stroke-width="7" stroke-linecap="round"/>' +
+      '<rect x="20" y="40" width="9" height="16" rx="4" fill="#e4202d" stroke="' + INK + '" stroke-width="3"/>' +
+      '<rect x="71" y="40" width="9" height="16" rx="4" fill="#e4202d" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M26 56 Q30 70 46 68" fill="none" stroke="' + INK + '" stroke-width="3" stroke-linecap="round"/><circle cx="48" cy="68" r="3.500" fill="' + INK + '"/>' +
+      '<circle cx="43" cy="46" r="2.500" fill="' + INK + '"/><circle cx="57" cy="46" r="2.500" fill="' + INK + '"/>' +
+      '<path d="M44 56 Q50 60 56 56" fill="none" stroke="' + INK + '" stroke-width="2.500" stroke-linecap="round"/>';
+  }
+
+  /* ---------- Mascots: not responders, not in the ping log ---------- */
+  var CAPE = "M16 48 Q2 86 8 106 Q60 112 112 106 Q118 86 104 48 Q60 72 16 48 Z";
+  function puppy() {
+    return '<svg viewBox="0 0 120 110" role="img" aria-label="A puppy hero in a teal cape">' +
+      '<path d="' + CAPE + '" fill="#0fb5a8" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M38 76 Q60 68 82 76 L80 90 Q60 95 40 90 Z" fill="#1f5cff" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<circle cx="60" cy="82" r="4.500" fill="#ffd60a" stroke="' + INK + '" stroke-width="2"/>' +
+      '<ellipse cx="60" cy="50" rx="27" ry="25" fill="#d9a066" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M33 41 Q60 30 87 41 Q90 52 78 53 Q70 48 60 50 Q50 48 42 53 Q30 52 33 41 Z" fill="#1f5cff" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<ellipse cx="46" cy="45" rx="6" ry="5" fill="#fff" stroke="' + INK + '" stroke-width="2"/><ellipse cx="74" cy="45" rx="6" ry="5" fill="#fff" stroke="' + INK + '" stroke-width="2"/>' +
+      '<circle cx="47" cy="46" r="2.500" fill="' + INK + '"/><circle cx="73" cy="46" r="2.500" fill="' + INK + '"/>' +
+      '<ellipse cx="60" cy="63" rx="14" ry="10" fill="#f6dfba" stroke="' + INK + '" stroke-width="2.500"/>' +
+      '<ellipse cx="60" cy="58" rx="5.500" ry="4" fill="' + INK + '"/>' +
+      '<path d="M60 62 L60 65 M52 66 Q60 73 68 66" fill="none" stroke="' + INK + '" stroke-width="2.500" stroke-linecap="round"/>' +
+      '<path d="M57 69 Q60 78 64 69 Z" fill="#ff6b81" stroke="' + INK + '" stroke-width="1.500" stroke-linejoin="round"/>' +
+      '<path d="M38 34 Q16 34 18 64 Q30 70 38 52 Z" fill="#8a5a2b" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M82 34 Q104 34 102 64 Q90 70 82 52 Z" fill="#8a5a2b" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '</svg>';
+  }
+  function kitty(mood) {
+    var mouth = mood === "worried" ? '<path d="M52 71 Q60 64 68 71" fill="none" stroke="' + INK + '" stroke-width="2.200" stroke-linecap="round"/>'
+      : mood === "cheer" ? '<path d="M53 65 Q60 77 67 65 Z" fill="#7a1020" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>'
+      : '<path d="M60 63 Q55 69 50 65 M60 63 Q65 69 70 65" fill="none" stroke="' + INK + '" stroke-width="2.200" stroke-linecap="round"/>';
+    var extra = mood === "worried" ? '<path d="M98 34 Q103 42 98 46 Q93 42 98 34 Z" fill="#8fd3ff" stroke="' + INK + '" stroke-width="2"/>'
+      : mood === "cheer" ? '<path d="M102 18 l2.500 6 6 2.500 -6 2.500 -2.500 6 -2.500-6 -6-2.500 6-2.500z" fill="#ffd60a" stroke="' + INK + '" stroke-width="1.500" stroke-linejoin="round"/>' : "";
+    return '<svg viewBox="0 0 120 110" role="img" aria-label="A kitty hero in a purple cape with a lightning emblem">' +
+      '<path d="' + CAPE + '" fill="#3d1f7a" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M38 76 Q60 68 82 76 L80 94 Q60 100 40 94 Z" fill="#e4202d" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M62 78 L54 88 L60 88 L57 96 L67 85 L61 85 Z" fill="#ffd60a" stroke="' + INK + '" stroke-width="1.500" stroke-linejoin="round"/>' +
+      '<path d="M34 38 L30 10 L52 28 Z" fill="#f0a04b" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><path d="M36 33 L34 18 L46 28 Z" fill="#ff9db1"/>' +
+      '<path d="M86 38 L90 10 L68 28 Z" fill="#f0a04b" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><path d="M84 33 L86 18 L74 28 Z" fill="#ff9db1"/>' +
+      '<ellipse cx="60" cy="52" rx="29" ry="25" fill="#f0a04b" stroke="' + INK + '" stroke-width="3"/>' +
+      '<path d="M60 28 L60 36 M52 29 L53 36 M68 29 L67 36" stroke="#b9661a" stroke-width="3" stroke-linecap="round"/>' +
+      '<ellipse cx="60" cy="63" rx="12" ry="8" fill="#fff3dd"/>' +
+      '<path d="M32 44 L48 40 Q60 44 72 40 L88 44 Q90 54 76 54 Q66 50 60 52 Q54 50 44 54 Q30 54 32 44 Z" fill="#e4202d" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<ellipse cx="47" cy="47" rx="6" ry="4.500" fill="#b6ff7a" stroke="' + INK + '" stroke-width="2"/><ellipse cx="73" cy="47" rx="6" ry="4.500" fill="#b6ff7a" stroke="' + INK + '" stroke-width="2"/>' +
+      '<ellipse cx="47" cy="47" rx="1.600" ry="4" fill="' + INK + '"/><ellipse cx="73" cy="47" rx="1.600" ry="4" fill="' + INK + '"/>' +
+      '<path d="M56 58 L64 58 L60 63 Z" fill="#ff7a93" stroke="' + INK + '" stroke-width="1.500" stroke-linejoin="round"/>' + mouth +
+      '<path d="M44 62 L26 58 M44 66 L26 68 M76 62 L94 58 M76 66 L94 68" stroke="' + INK + '" stroke-width="2" stroke-linecap="round"/>' + extra +
+      '</svg>';
+  }
+
+  /* ---------- State ---------- */
+  var DAYN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function dayLabel(d) { var x = new Date(2026, 8, 5 + d); return DAYN[x.getDay()] + " " + x.getDate() + " " + MON[x.getMonth()]; }
+
+  function fresh() {
+    return {
+      day: 0, filter: "all", target: "mite", counter: 0, msg: "",
+      r: {
+        mite: {
+          key: "mite", name: "Meteor Mite", base7: 1, usual: 11, quiet: true, raisedDay: 0, clearedDay: null, sent: null, reply: null, reported: false, open: false, sims: [], log: [],
+          hist: [
+            { d: "5 Sep 15:06", o: "M", c: 41393 }, { d: "29 Aug 09:15", o: "M", c: 41254 },
+            { d: "27 Aug 20:03", o: "D", c: 41232 }, { d: "22 Aug 20:53", o: "M", c: 41152 },
+            { d: "20 Aug 16:41", o: "M", c: 41114 }
+          ],
+          episodes: [{ raised: 0, cleared: null, acted: false }]
+        },
+        gale: {
+          key: "gale", name: "The Gale", base7: 27, usual: 13, quiet: false, raisedDay: null, clearedDay: null, sent: null, reply: null, reported: false, open: false, sims: [], log: [],
+          hist: [
+            { d: "5 Sep 19:57", o: "T", c: 41406 }, { d: "5 Sep 18:20", o: "D", c: 41402 },
+            { d: "5 Sep 17:57", o: "T", c: 41401 }, { d: "5 Sep 16:01", o: "T", c: 41397 },
+            { d: "5 Sep 13:13", o: "T", c: 41392 }
+          ],
+          episodes: []
+        }
+      }
+    };
+  }
+  var S = fresh();
+
+  function last5(h) { return h.slice(0, 5); }
+  function cnt(h, o) { return last5(h).filter(function (x) { return x.o === o; }).length; }
+  function $(id) { return document.getElementById(id); }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function resp() { return S.r[S.target]; }
+  function curEp(r) { return r.episodes[r.episodes.length - 1]; }
+  function isBack(r) { return !r.quiet && r.clearedDay !== null && S.day - r.clearedDay < 3; }
+  function p7(r) { return r.base7 + r.sims.filter(function (d) { return S.day - d < 7; }).length; }
+  function toneOf(r) { return r.quiet ? "low" : (p7(r) > r.usual * 1.3 ? "surge" : "on"); }
+  function canCheckin(r) { return r.quiet && (r.sent === null || S.day - r.sent >= 1); }
+  function logIt(r, k, x) { r.log.push({ k: k, t: dayLabel(S.day), x: x }); }
+
+  /* ---------- The Quiet rule (brief: raise at 3 of last 5 missed, clear at 4 of last 5 taken) ---------- */
+  function evaluate(r) {
+    if (!r.quiet && r.hist.length >= 5 && cnt(r.hist, "M") >= 3) {
+      r.quiet = true; r.raisedDay = S.day; r.clearedDay = null; r.sent = null; r.reply = null; r.reported = false;
+      r.episodes.push({ raised: S.day, cleared: null, acted: false });
+      logIt(r, "sys", "<b>Quiet raised:</b> " + cnt(r.hist, "M") + " of the last 5 pings missed.");
+      return "raised";
+    }
+    if (r.quiet && cnt(r.hist, "T") >= 4) {
+      r.quiet = false; r.clearedDay = S.day; curEp(r).cleared = S.day;
+      logIt(r, "sys", "<b>Quiet cleared automatically:</b> 4 of the last 5 pings taken.");
+      return "cleared";
+    }
+    return null;
+  }
+  function addPing(r, o) {
+    S.counter += 1;
+    r.hist.unshift({ d: dayLabel(S.day), o: o, c: 41409 + S.counter });
+    r.sims.push(S.day);
+    return evaluate(r);
+  }
+
+  /* ---------- Drawing ---------- */
+  function pingChips(h) {
+    return '<div class="pings" aria-label="Last 5 pings, newest first">' +
+      last5(h).map(function (x) { return '<span class="p ' + x.o + '">' + LABEL[x.o] + '</span>'; }).join("") + '</div>';
+  }
+  function pingTable(h) {
+    return '<table><thead><tr><th>When</th><th>Callout</th><th>Outcome</th><th title="Counted by the Quiet rule">Rule</th></tr></thead><tbody>' +
+      h.slice(0, 8).map(function (x, i) {
+        return '<tr><td>' + esc(x.d) + '</td><td class="m">' + x.c + '</td><td>' + LABEL[x.o] + '</td><td class="w">' + (i < 5 ? "&#10003;" : "") + '</td></tr>';
+      }).join("") + '</tbody></table>';
+  }
+  function meter(now, usual, tone) {
+    var max = Math.max(now, usual, 1), w = Math.round(100 * now / max), u = Math.round(100 * usual / max);
+    return '<div class="meter"><div class="lab"><span>Power: pings in 7 days</span><b>' + now + ' · usual ' + usual + '</b></div>' +
+      '<div class="track"><div class="fill ' + tone + '" style="width:' + w + '%"></div>' + (u < 100 ? '<span class="usual" style="right:auto;left:' + u + '%"></span>' : '') + '</div></div>';
+  }
+  function bubble(r) {
+    if (isBack(r)) return "Now we're talking!";
+    if (r.quiet && r.reply === "phone") return "Check my phone, please!";
+    if (r.quiet && r.reply === "away") return "Need a breather.";
+    if (r.quiet && r.reply === "fine") return "I'm good! Keep 'em coming!";
+    if (r.quiet && r.sent !== null) return "Wait, a message? Hello?";
+    if (r.quiet) return "Hello...? Is my phone even on?";
+    return p7(r) > r.usual * 1.5 ? "Can't catch my breath!" : "Ready for anything!";
+  }
+
+  var MARK = { M: "&#10007;", T: "&#10003;", D: "&ndash;" };
+  function tipBox(r) {
+    return '<span class="tipbox" role="tooltip"><b class="h">Quiet because ' + cnt(r.hist, "M") + ' of the last 5 pings were missed.</b>Last 5 pings, newest first:<ol>' +
+      last5(r.hist).map(function (x) { return '<li class="' + x.o + '"><i>' + MARK[x.o] + '</i>' + LABEL[x.o] + '</li>'; }).join("") + '</ol>' +
+      '<div style="margin-top:6px;font-size:12.5px">Quiet turns on at 3 missed. It turns off at 4 taken.</div></span>';
+  }
+  var TIMELINE = [
+    ["12 Aug", "4.2 ships. The ping wait drops from 90 to 60 seconds.", ""],
+    ["13-14 Aug", "Meteor Mite misses 3 pings in a row: twice on 13 Aug, once on 14 Aug.", ""],
+    ["15 Aug", "Quiet would have appeared: 3 of the last 5 pings missed.", "replay"],
+    ["22 Aug - 5 Sep", "Only 4 more pings in 15 days: 3 missed, 1 turned down.", ""],
+    ["5 Sep", "1 ping in the last 7 days, usually 11. Kip is texting Meteor Mite and has no way to see why.", ""],
+    ["Today", "Quiet shows on Kip's card with the reason, and he can send a check-in.", "now"]
+  ];
+  function timelineHtml() {
+    return '<h4>What changed</h4><ol class="tl">' + TIMELINE.map(function (t) {
+      return '<li><span class="when' + (t[2] === "now" ? " now" : "") + '">' + t[0] + '</span><span class="what">' + t[1] + (t[2] === "replay" ? '<span class="rp">from the replay</span>' : "") + '</span></li>';
+    }).join("") + '</ol>';
+  }
+  function why35Html() {
+    return '<div class="why35"><div class="pick">Chosen: 3 of 5 missed</div><dl>' +
+      '<dt>Why not 2 of 5?</dt><dd>Too noisy. 24 alerts in 10 weeks, and 11 of the 12 other heroes flagged.</dd>' +
+      '<dt>Why not 4 of 7?</dt><dd>Too late. Two of the four lockouts were flagged a day after they happened.</dd>' +
+      '<dt>Why not 3 of 7?</dt><dd>It catches a near-miss (Nightwell) but raises 8 alerts instead of 6.</dd>' +
+      '<dt>Why 4 of 5 to clear?</dt><dd>So the badge does not flicker on and off.</dd></dl>' +
+      '<div class="note">Data behind this: 16 heroes, 10 weeks of ping history (29 Jun to 6 Sep), 4 observed lockouts. Chosen: all four flagged, 0 to 5 days early, 6 alerts in total.</div></div>';
+  }
+
+  function cardHtml(r) {
+    var n = p7(r), tn = toneOf(r), back = isBack(r), days = r.quiet ? S.day - r.raisedDay : 0;
+    var cls = "card " + r.key + (r.quiet ? " quiet" : (back ? " back" : ""));
+    var pct = Math.min(1, n / r.usual);
+    var av = r.key === "mite" ? avatarMite(pct, tn) : avatarGale(pct, tn);
+    var kick = r.key === "mite" ? kitty(r.quiet ? "worried" : (back ? "cheer" : "happy")) : puppy();
+    var out = '<article class="' + cls + '" id="c-' + r.key + '"><div class="band"><div class="hero">' + av + '</div>' +
+      '<div class="hname"><span class="name">' + esc(r.name) + '</span><span class="alias">Cover identity · Rook responder</span></div>' +
+      '<div class="sidekick" title="Sidekick (mascot)">' + kick + '</div></div><div class="body">';
+    out += '<div>' + (r.quiet ? '<span class="tip" tabindex="0" aria-label="Why this badge appeared: ' + cnt(r.hist, "M") + ' of the last 5 pings were missed"><span class="pw quiet">QUIET<small>Power fading' + (days ? " · day " + days : "") + '</small></span>' + tipBox(r) + '</span>'
+      : back ? '<span class="pw back">BACK IN ROTATION<small>Power restored</small></span>'
+      : '<span class="pw on">AVAILABLE<small>Powered up</small></span>') + '</div>';
+    out += '<div class="bubble left" style="margin-left:8px">' + esc(bubble(r)) + '</div>';
+    out += meter(n, r.usual, tn) + pingChips(r.hist);
+    if (r.quiet) {
+      out += '<div class="caption"><span class="meanwhile">MEANWHILE...</span><b>' + cnt(r.hist, "M") + ' of the last 5 pings were missed.</b> Missed means no answer inside the wait. It does not tell us whether the phone rang. Get in touch within 24 hours.</div>';
+      if (days >= 14) out += '<div class="caption" style="background:#ffb3b8"><b>Quiet for ' + days + ' days.</b> It is now a line in the weekly report to Helen. It is never cleared by time alone.</div>';
+      var noReply = r.sent !== null && !r.reply && S.day - r.sent >= 1;
+      out += '<div class="actions"><button class="btn" data-act="checkin" data-r="' + r.key + '"' + (canCheckin(r) ? "" : " disabled") + '>' +
+        (r.sent === null ? "SEND CHECK-IN" : (canCheckin(r) ? "SEND ANOTHER" : "CHECK-IN SENT")) + '</button>' +
+        '<button class="btn ghost" data-act="checkedin" data-r="' + r.key + '">Mark "checked in"</button></div>';
+      if (r.sent !== null) out += '<div class="note">' + (noReply ? "No reply in 24 hours. " : "") + 'One check-in per responder every 24 hours. It is a message, not a ping: no callout, no effect on ranking.</div>';
+    } else if (back) {
+      out += '<div class="caption good"><b>Quiet cleared on its own.</b> ' + cnt(r.hist, "T") + ' of the last 5 pings were taken. Nobody had to do anything.</div>';
+    }
+    if (r.log.length) {
+      out += '<ul class="log" aria-label="Activity">' + r.log.map(function (l) { return '<li><time>' + l.t + '</time><span>' + l.x + '</span></li>'; }).join("") + '</ul>';
+    }
+    out += '<button class="link" data-act="toggle" data-r="' + r.key + '" aria-expanded="' + r.open + '">' + (r.open ? "Hide" : (r.quiet ? "Why is this Quiet?" : "Show ping history")) + '</button>';
+    if (r.open) {
+      out += '<div class="detail"><div><b>The rule.</b> Quiet turns on when 3 of the last 5 pings are missed, once there are at least 5 pings. It turns off when 4 of the last 5 are taken. Nobody can dismiss it, so it cannot hide a problem. It changes nothing in routing, and nobody can see or change a score.</div>' +
+        pingTable(r.hist) +
+        (r.key === "mite" ? '<div class="note">Before 4.2 (12 Aug) Meteor Mite averaged about 11 pings a week. Since then, about 4.</div>' + timelineHtml() : "") +
+        '<button class="link" data-act="why35" data-r="' + r.key + '" aria-expanded="' + !!r.why + '">' + (r.why ? "Hide why 3 of 5" : "Why 3 of 5?") + '</button>' + (r.why ? why35Html() : "") + '</div>';
+    }
+    return out + '</div></article>';
+  }
+
+  function scorecard() {
+    var all = [];
+    Object.keys(S.r).forEach(function (k) { S.r[k].episodes.forEach(function (e) { all.push(e); }); });
+    return {
+      raised: all.length,
+      acted: all.filter(function (e) { return e.acted; }).length,
+      self: all.filter(function (e) { return e.cleared !== null && e.cleared - e.raised <= 7 && !e.acted; }).length,
+      open: all.filter(function (e) { return e.cleared === null; }).length
+    };
+  }
+
+  function render() {
+    var q = Object.keys(S.r).filter(function (k) { return S.r[k].quiet; });
+    $("nQuiet").textContent = q.length;
+    $("fAll").setAttribute("aria-pressed", String(S.filter === "all"));
+    $("fQuiet").setAttribute("aria-pressed", String(S.filter === "quiet"));
+    $("kipBubble").textContent = kipSays(q.length);
+    $("when").textContent = dayLabel(S.day) + " 2026, 11:02pm";
+    $("dayNow").textContent = "day " + S.day + " (" + dayLabel(S.day) + ")";
+    $("simTarget").value = S.target;
+    if (S.filter === "quiet") {
+      $("cards").innerHTML = q.length ? q.map(function (k) { return cardHtml(S.r[k]); }).join("")
+        : '<div class="empty"><div class="pets-row"><span>' + puppy() + '</span><span>' + kitty("cheer") + '</span></div>All clear, heroes! Nobody on your list has missed 3 of their last 5 pings.</div>';
+    } else {
+      $("cards").innerHTML = cardHtml(S.r.mite) + cardHtml(S.r.gale);
+    }
+    var t = resp();
+    $("tracker").textContent = t.name + ": last 5 pings, taken " + cnt(t.hist, "T") + ", missed " + cnt(t.hist, "M") + (t.quiet ? " (4 taken clears)" : " (3 missed raises)");
+    $("simMsg").textContent = S.msg;
+    var sc = scorecard();
+    $("score").innerHTML = '<span>Quiet alerts raised</span><b>' + sc.raised + '</b><span>Kip acted on</span><b>' + sc.acted + '</b>' +
+      '<span>Self-cleared in 7 days, no action</span><b>' + sc.self + '</b><span>Open now</span><b>' + sc.open + '</b>' +
+      '<span class="note" style="grid-column:1/-1">Target: at most one self-cleared alert a fortnight.</span>';
+    var rep = q.filter(function (k) { return S.day - S.r[k].raisedDay >= 14; }).map(function (k) {
+      return "<div><b>" + S.r[k].name + "</b>: Quiet " + (S.day - S.r[k].raisedDay) + " days</div>";
+    });
+    $("report").innerHTML = rep.length ? rep.join("") : '<span class="note">Nothing yet. Anyone Quiet for 14 days appears here.</span>';
+  }
+  function kipSays(nq) {
+    var m = S.r.mite;
+    if (!nq) return "That's more like it!";
+    if (m.quiet && m.reply) return "Got their reply. Let's see it through.";
+    if (m.quiet && m.sent !== null) return "Check-in's out. Now we wait.";
+    return "Two cards, two very different weeks. What's going on?";
+  }
+
+  /* ---------- Impact bursts ---------- */
+  var BURST_PTS = (function () {
+    var pts = [], n = 22;
+    for (var i = 0; i < n * 2; i++) {
+      var a = Math.PI * i / n, rr = i % 2 ? 36 : 49;
+      pts.push((50 + rr * Math.cos(a)).toFixed(1) + "," + (50 + rr * Math.sin(a)).toFixed(1));
+    }
+    return pts.join(" ");
+  })();
+  function burst(text, fill) {
+    var el = document.createElement("div");
+    el.className = "burst";
+    el.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="' + BURST_PTS + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.2" stroke-linejoin="round"/></svg><span>' + text + '</span>';
+    $("fx").appendChild(el);
+    $("sr").textContent = text.replace(/<br>/g, " ");
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1550);
+  }
+  function banner(r) {
+    var old = document.querySelector(".banner");
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "banner"; el.setAttribute("role", "status");
+    el.innerHTML = '<div class="in"><span class="x">tap to dismiss</span><div class="big">BACK IN ACTION!</div>' +
+      '<div class="small">' + esc(r.name) + ' has taken ' + cnt(r.hist, "T") + ' of the last 5 pings and has rejoined the hero rotation</div></div>';
+    el.addEventListener("click", function () { if (el.parentNode) el.parentNode.removeChild(el); });
+    document.body.appendChild(el);
+    $("sr").textContent = "Back in action. " + r.name + " has rejoined the rotation.";
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 4300);
+  }
+  function eventBurst(ev, fallback, r) {
+    if (ev === "raised") burst("POWER<br>FADING!", "#5a5575");
+    else if (ev === "cleared") banner(r);
+    else if (fallback) burst(fallback, "#ffd60a");
+  }
+
+  /* ---------- Actions ---------- */
+  function sendCheckin(r, auto) {
+    r.sent = S.day; r.reply = null; curEp(r).acted = true;
+    logIt(r, "sys", auto ? "Check-in sent automatically so the reply has something to answer." : "Check-in sent to " + esc(r.name) + ". No reply yet.");
+  }
+  function reply(kind) {
+    var r = resp();
+    if (!r.quiet) { S.msg = r.name + " is not Quiet, so there is no check-in to reply to."; return render(); }
+    if (r.sent === null) sendCheckin(r, true);
+    if (r.reply) { S.msg = "Already replied to this check-in."; return render(); }
+    r.reply = kind; S.msg = "";
+    if (kind === "phone") logIt(r, "reply", "<b>" + esc(r.name) + " replied:</b> my phone isn't getting pings. Test ping sent. Delivery not confirmed yet, because we have no push receipts.");
+    if (kind === "away") logIt(r, "reply", "<b>" + esc(r.name) + " replied:</b> not available right now. Shown to you only. It is not written to the availability record until Wen Li and the Supply team have signed that off, so routing does not change.");
+    if (kind === "fine") logIt(r, "reply", "<b>" + esc(r.name) + " replied:</b> I'm fine, keep pinging me. Quiet stays until 4 of the last 5 pings are taken.");
+    render(); burst("REPLY<br>IN!", "#1f5cff");
+  }
+  var SCN = {
+    streak: ["M", "M", "M"],
+    nightwell: ["D", "D", "T", "M", "D", "D"],
+    stormwrack: ["M", "M", "M", "T", "T", "T", "T"]
+  };
+  function runScenario(k) {
+    var r = resp(), evs = [];
+    SCN[k].forEach(function (o) { var e = addPing(r, o); if (e) evs.push(e); });
+    S.msg = r.name + ": " + (evs.length ? evs.map(function (e) { return e === "raised" ? "Quiet raised" : "Quiet cleared"; }).join(", then ") + "." :
+      (r.quiet ? "still Quiet." : "not flagged. " + cnt(r.hist, "M") + " of the last 5 missed, so Quiet stays off."));
+    render(); eventBurst(evs.length ? evs[evs.length - 1] : null, null, r);
+  }
+  function advance(n) {
+    S.day += n;
+    Object.keys(S.r).forEach(function (k) {
+      var r = S.r[k];
+      if (r.quiet && !r.reported && S.day - r.raisedDay >= 14) { r.reported = true; logIt(r, "sys", "Quiet for 14 days. Added as a line in the weekly report to Helen."); }
+    });
+    S.msg = "";
+    render();
+  }
+
+  document.addEventListener("click", function (e) {
+    var pet = e.target.closest(".pet");
+    if (pet) {
+      pet.classList.remove("bounce"); void pet.offsetWidth; pet.classList.add("bounce");
+      return burst(pet.id === "petPup" ? "WOOF!<br>On duty!" : "MEOW!", pet.id === "petPup" ? "#0fb5a8" : "#7b3fe4");
+    }
+    var t = e.target.closest("[data-act],[data-sim],#fAll,#fQuiet");
+    if (!t) return;
+    if (t.id === "fAll") { S.filter = "all"; return render(); }
+    if (t.id === "fQuiet") { S.filter = "quiet"; return render(); }
+    var a = t.getAttribute("data-act"), s = t.getAttribute("data-sim"), r = S.r[t.getAttribute("data-r")];
+    if (a === "checkin" && r && canCheckin(r)) { sendCheckin(r, false); render(); return burst("CHECK-IN<br>SENT!", "#e4202d"); }
+    if (a === "checkedin" && r) { curEp(r).acted = true; logIt(r, "note", "Note: you checked in with " + esc(r.name) + " by phone. This does not clear Quiet."); return render(); }
+    if (a === "toggle" && r) { r.open = !r.open; return render(); }
+    if (a === "why35" && r) { r.why = !r.why; return render(); }
+    if (!s) return;
+    if (s.indexOf("ping-") === 0) { var tr = resp(), o = s.slice(5), ev = addPing(tr, o); S.msg = ""; render(); return eventBurst(ev, o === "T" ? "ZAP!" : null, tr); }
+    if (s.indexOf("scn-") === 0) return runScenario(s.slice(4));
+    if (s.indexOf("reply-") === 0) return reply(s.slice(6));
+    if (s.indexOf("day-") === 0) return advance(parseInt(s.slice(4), 10));
+    if (s === "reset") { S = fresh(); render(); }
+  });
+  $("simTarget").addEventListener("change", function () { S.target = this.value; S.msg = ""; render(); });
+
+  $("kipAvatar").innerHTML = avatarKip();
+  $("petPup").innerHTML = puppy();
+  $("petKitty").innerHTML = kitty("happy");
+  render();
+})();
+</script>
+</body>
+</html>

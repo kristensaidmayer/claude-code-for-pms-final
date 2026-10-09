@@ -174,6 +174,25 @@ Things I did not learn from the data, code or interviews. Each is my working ass
 | What would make us switch from 3 of 5? | More than one self-cleared alert a fortnight after two weeks on the 90s wait: move towards 4 of 7. If Helen would rather catch dips like Nightwell's: 3 of 7. Review at two weeks and again after one full release. |
 | What would make us remove it? | A full release cycle with no true alert (none that Kip acted on or that preceded a lockout): simplify to the roster alarm and the weekly report line. |
 
+## Questions a sharp reviewer will ask
+
+**What ships if we have one sprint?** Three things: the 90s wait, the score rebuilt from the ping log, and the roster alarm. Everything else is optional.
+
+**Why isn't Quiet in that?** The routing fix removes the lockout. Quiet adds visibility, which is valuable but not required to stop the failure.
+
+**What is the biggest assumption?** Not the threshold. It is that a handler acting on Quiet changes the outcome. We know Quiet detects. We do not know whether Kip doing something helps, and the one example we have (Kip texting Meteor Mite) did not.
+
+**What would make us kill it?** If the routing fix eliminates lockouts and handlers rarely act on Quiet within a release cycle, we remove it or cut it back to the roster alarm and weekly report line.
+
+**What did we deliberately not solve?** Responder motivation, delivery diagnostics, phone problems, long-term availability management, and every future routing failure. We solve the lockout and give early sight of the one failure pattern we saw.
+
+**How do we know we are not overfitting to four responders?** We might be. The rule was tested across all 16 responders, so the sensitivity and noise trade-off is real, but it was chosen after looking at the four, on the same 10 weeks, with no holdout. Treat it as a starting point, not a universal indicator, and re-test it on fresh data after the fix.
+
+**What have we actually proven?**
+- *Shown from the data and code:* the lockouts happened and the mechanism is in the code. 3 of 5 flags all four, 0 to 5 days early, across all 16 responders (6 alerts in 10 weeks). Every ping-volume collapse of 50% or more in the window was one of the four.
+- *Simulated, not yet live:* that the 90s wait and the rebuilt score fix it (the four land at 0.67 to 0.80 on the ping log, pending Wen Li's replay), and that the roster alarm would have fired on 12 Aug.
+- *Still learning:* whether handlers act on Quiet, whether responders want self-service, whether check-in replies improve outcomes, and how common delivery failures are.
+
 ## Open items by owner
 
 | Who | What |
